@@ -1,6 +1,6 @@
 # Evidencia del estado base — Mattermost #38480
 
-Fecha de preparación: **26 de septiembre de 2026**
+Fecha de preparación: **26 de septiembre de 2026**  
 Issue: [#38480 — Collapse Details of a Mattermost Message](https://github.com/mattermost/mattermost/issues/38480)
 
 ## 1. Objetivo
@@ -15,7 +15,6 @@ La evidencia debe cubrir:
 - Mensaje publicado.
 - Variante cerrada y variante `open`.
 - Contenido con párrafos y bloques de código.
-- Edición posterior del mensaje.
 - Comportamiento seguro del HTML no admitido.
 
 ## 2. Base utilizada
@@ -120,21 +119,17 @@ unset MM_EVIDENCE_PASSWORD
 
 | Usuario | Rol | Uso |
 |---|---|---|
-| `author38480` | Miembro | Redactar, previsualizar, publicar y editar |
+| `author38480` | Miembro | Redactar, previsualizar y publicar |
 | `reader38480` | Miembro | Comprobar lo que ve otro lector |
 | `sysadmin38480` | System Admin | Preparación y comparación administrativa |
 
-Usar datos ficticios. No incluir contraseñas, tokens, cookies ni información real de depuración en las capturas..
+Usar datos ficticios. No incluir contraseñas, tokens, cookies ni información real de depuración en las capturas.
 
 **Estado local verificado (26 de septiembre de 2026):** las tres cuentas, el equipo y el canal fueron creados. Las tres membresías de equipo y canal están activas como miembros ordinarios; `sysadmin38480` conserva además el rol global `system_admin`.
 
-## 5. Mensajes de prueba
+## 5. Caso de prueba
 
-Iniciar sesión como `author38480`, entrar a **Pruebas details** y publicar cada caso por separado.
-
-### Caso A — details cerrado por defecto
-
-Copiar exactamente:
+Iniciar sesión como `author38480`, entrar a **Pruebas details** y pegar los cuatro casos en un mensaje. Los casos A y B reproducen la sintaxis solicitada; C controla que Markdown funcione normalmente; D comprueba una entrada incompleta.
 
 ````text
 Caso A — sección cerrada por defecto
@@ -152,13 +147,7 @@ duration_ms=125
 
 Fin de los detalles.
 </details>
-````
 
-Antes de publicar, abrir la vista previa si está disponible y comparar el texto fuente con el resultado.
-
-### Caso B — details inicialmente abierto
-
-````text
 Caso B — sección inicialmente abierta
 
 <details open>
@@ -172,11 +161,7 @@ result=example
 ```
 
 </details>
-````
 
-### Caso C — control Markdown sin HTML
-
-````text
 Caso C — control Markdown
 
 Resumen visible.
@@ -188,97 +173,75 @@ line_03=example
 line_04=example
 line_05=example
 ```
-````
 
-Este control permite distinguir el comportamiento normal de un bloque de código del comportamiento solicitado para `details`.
-
-### Caso D — sintaxis incompleta
-
-```text
 Caso D — sintaxis incompleta
 
 <details>
 <summary>Resumen sin cierre</summary>
 
 Contenido sin etiqueta de cierre.
-```
+````
 
-La finalidad es observar un resultado seguro y estable, no ejecutar HTML arbitrario.
+## 6. Evidencia
 
-## 6. Recorrido de captura
+### Fuente
 
-Mantener el navegador en `1440 × 900`, zoom `100 %`, y mostrar el nombre del canal cuando sea posible.
+El compositor conserva las etiquetas y el contenido introducidos por el autor.
 
-### Como autor
+![Mensaje fuente en el compositor](capturas/01-composer-details-source.png)
 
-1. Pegar el Caso A sin publicarlo.
-2. Capturar el texto fuente en el compositor.
-3. Abrir la vista previa y capturar el resultado.
-4. Publicar el Caso A y capturar su estado inicial.
-5. Intentar expandir y contraer el contenido.
-6. Publicar el Caso B y comprobar si inicia abierto.
-7. Publicar los casos C y D.
-8. Editar el Caso A, cambiar el texto interno y guardar.
-9. Volver a abrir o recargar el canal y comprobar el resultado.
+### Vista previa
 
-### Como lector
+La vista previa no crea controles desplegables. Las etiquetas se presentan como texto y el contenido permanece visible.
 
-1. Cerrar sesión e iniciar como `reader38480`.
-2. Abrir **Pruebas details**.
-3. Capturar los casos A y B en su estado inicial.
-4. Intentar operar cualquier control expandible.
-5. Confirmar que el bloque de código del Caso C se muestra normalmente.
-6. Confirmar que el Caso D no rompe la vista ni ejecuta contenido.
+![Vista previa del mensaje](capturas/02-preview-details.png)
 
-## 7. Capturas sugeridas
+### Mensaje publicado
 
-Guardar las imágenes en `evidencia-base/issue-38480/capturas/`:
+Los casos A y B muestran `<details>` y `<summary>` literalmente. No existe un control para expandir o contraer, y el atributo `open` no cambia el resultado. El caso C confirma que el bloque Markdown ordinario sí se representa como código. El caso D permanece estable y no rompe la vista.
 
-| Archivo | Contenido |
-|---|---|
-| `01-composer-details-source.png` | Caso A en el compositor |
-| `02-preview-details.png` | Vista previa del Caso A |
-| `03-published-details-closed.png` | Caso A recién publicado |
-| `04-published-details-open.png` | Caso B recién publicado |
-| `05-markdown-code-control.png` | Caso C publicado |
-| `06-invalid-details.png` | Caso D publicado |
-| `07-edited-details.png` | Caso A después de editar |
-| `08-reader-view.png` | Vista de los casos A y B como lector |
+![Casos publicados](capturas/03-published-cases.png)
 
-No es obligatorio conservar todas si una captura demuestra varios puntos claramente. Renombrar esta lista en el README final para que coincida con los archivos reales.
+### Vista del lector
 
-## 8. Observaciones
+`reader38480` observa el mismo resultado que el autor; el comportamiento no depende de permisos administrativos.
 
-Completar después de las capturas:
+![Casos vistos por el lector](capturas/04-reader-view.png)
 
-| Caso | Vista previa | Publicado | ¿Se puede expandir? | Observación |
-|---|---|---|---:|---|
-| A — `<details>` | Pendiente | Pendiente | Pendiente | |
-| B — `<details open>` | Pendiente | Pendiente | Pendiente | |
-| C — Markdown normal | Pendiente | Pendiente | No aplica | |
-| D — sintaxis incompleta | Pendiente | Pendiente | Pendiente | |
-| A después de editar | No aplica | Pendiente | Pendiente | |
+## 7. Resultados
 
-## 9. Resultado esperado por el issue
+| Caso | Resultado observado | ¿Se puede expandir? |
+|---|---|---:|
+| A — `<details>` | Etiquetas literales y contenido visible desde el inicio | No |
+| B — `<details open>` | Igual que el caso A; `open` no tiene efecto | No |
+| C — Markdown normal | Bloque de código representado correctamente | No aplica |
+| D — sintaxis incompleta | Texto visible sin romper la interfaz | No |
 
-Una implementación que satisfaga la solicitud debería:
+La comparación entre fuente, vista previa, publicación y lector demuestra que Mattermost conserva el mensaje, pero no interpreta esta sintaxis como una sección desplegable.
 
-- Mostrar el contenido de `summary` como control visible.
-- Iniciar `<details>` contraído.
-- Permitir expandirlo y volverlo a contraer.
+## 8. Comportamiento solicitado
+
+Una implementación que satisfaga el issue debería:
+
+- Mostrar `summary` como un control visible.
+- Iniciar `<details>` contraído y permitir abrirlo y cerrarlo.
 - Iniciar `<details open>` expandido.
-- Renderizar correctamente párrafos y bloques de código internos.
-- Mantener el contenido después de editar y recargar.
+- Representar párrafos y bloques de código dentro de la sección.
+- Tratar sintaxis incompleta de forma segura.
 - Ser operable con teclado y comunicar su estado.
-- Tratar sintaxis inválida de forma segura.
 
-## 10. Conclusión pendiente
+No se asume que Mattermost deba habilitar HTML arbitrario; la solución puede ofrecer sintaxis o componentes equivalentes con sanitización apropiada.
 
-Después de revisar la evidencia, clasificar el estado base:
+## 9. Conclusión
 
-- **Reproducido:** Mattermost no ofrece secciones desplegables equivalentes.
-- **Parcial:** existe alguna forma de contracción, pero no cubre el comportamiento solicitado.
-- **No reproducido:** los casos funcionan de forma equivalente en la base seleccionada.
+**Problema reproducido.**
 
-Registrar la diferencia exacta entre la solicitud y el comportamiento observado, sin asumir que el HTML arbitrario deba habilitarse.
+En la base seleccionada, Mattermost no ofrece secciones desplegables equivalentes a `<details>` / `<summary>` dentro de mensajes:
 
+- El resumen no funciona como control.
+- El contenido no puede ocultarse inicialmente.
+- No existe interacción para expandir o contraer.
+- `open` no produce un estado inicial diferente.
+- Autor y lector observan el mismo comportamiento.
+
+El control Markdown confirma que el renderizador funciona para sintaxis admitida; la diferencia corresponde específicamente a la funcionalidad solicitada por el issue.
