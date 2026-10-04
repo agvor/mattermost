@@ -17,8 +17,8 @@
 
 **Estado actual verificado.** El equipo reprodujo ambos problemas en Mattermost Team Edition `12.0.0-dev`, a partir del commit `53211e45b6e63e99a5cc64d1ce1b344e3b64cc51`:
 
-- **[#37406: Add Ability to discover team admin](https://github.com/mattermost/mattermost/issues/37406):** la lista de miembros no identifica a los Team Admins ni permite filtrarlos cuando quien consulta es un miembro ordinario. La búsqueda disponible se limita al texto y la alternativa de la System Console exige privilegios globales. El procedimiento y las capturas están en la [evidencia del estado base](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/evidencia-base/issue-37406/README.md) [2, 5].
-- **[#38480: Collapse Details of a Mattermost Message](https://github.com/mattermost/mattermost/issues/38480):** las etiquetas `<details>` y `<summary>` y el atributo `open` se muestran como texto, sin permitir contraer o expandir el contenido. El Markdown admitido se representa correctamente y el resultado es igual para quien publica y quien lee. El procedimiento y las capturas están en la [evidencia del estado base](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/evidencia-base/issue-38480/README.md) [2, 6].
+- **[#37406: Add Ability to discover team admin](https://github.com/mattermost/mattermost/issues/37406):** la lista de miembros no identifica a los Team Admins ni permite filtrarlos cuando quien consulta es un miembro ordinario. La búsqueda disponible se limita al texto y la alternativa de la System Console exige privilegios globales. El procedimiento y las capturas están en la [evidencia del estado base](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/evidencia-base/issue-37406/README.md) [2, 5].
+- **[#38480: Collapse Details of a Mattermost Message](https://github.com/mattermost/mattermost/issues/38480):** las etiquetas `<details>` y `<summary>` y el atributo `open` se muestran como texto, sin permitir contraer o expandir el contenido. El Markdown admitido se representa correctamente y el resultado es igual para quien publica y quien lee. El procedimiento y las capturas están en la [evidencia del estado base](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/evidencia-base/issue-38480/README.md) [2, 6].
 
 ![Estado actual de los issues #37406 y #38480](evidencia-estado-base.png)
 
@@ -112,7 +112,7 @@ El plan sigue el calendario oficial: avances en las semanas 6 y 11, y presentaci
 
 **Repositorio del grupo:** https://github.com/agvor/mattermost (fork del repositorio oficial)\
 **Base funcional evaluada:** `53211e45b6e63e99a5cc64d1ce1b344e3b64cc51`\
-**Guía de ejecución:** [SETUP_MATTERMOST.md](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/SETUP_MATTERMOST.md)\
+**Guía de ejecución:** [SETUP_MATTERMOST.md](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/SETUP_MATTERMOST.md)\
 **Evidencia reproducible:** vinculada en la descripción de cada issue.
 
 En esta etapa se verificó la base funcional y no se escribió código para implementar las mejoras.
@@ -121,7 +121,7 @@ En esta etapa se verificó la base funcional y no se escribió código para impl
 
 *Figura 3. Diagrama C4 de contexto de Mattermost y sus roles de usuario.*
 
-Código fuente: [arquitectura-c4-contexto.mmd](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/entregable01/arquitectura-c4-contexto.mmd).
+Código fuente: [arquitectura-c4-contexto.mmd](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/entregable01/arquitectura-c4-contexto.mmd).
 
 El diagrama presenta a Mattermost como único sistema de interés. Las personas representan roles, por lo que una misma persona puede actuar como miembro, Team Admin o System Admin. Solo se incluyen relaciones de uso directas. GitHub y CI/CD pertenecen al proceso de desarrollo; Docker y PostgreSQL son detalles internos. Ninguno corresponde a este nivel del modelo C4.
 
@@ -141,9 +141,9 @@ El diagrama presenta a Mattermost como único sistema de interés. Las personas 
 2. Mattermost. Issues #37406 y #38480, consultados en septiembre de 2026.
 3. Ramírez Cordero, S. *Fundamentos de procesos*; *Modelado de procesos, VSM, evaluación y medición*; *Enfoques de gestión de proyectos de tecnología*; *Planificación y estimación de proyectos de software*. CENFOTEC, 2026.
 4. Mattermost. [Repositorio](https://github.com/mattermost/mattermost) y [guía de desarrollo](https://developers.mattermost.com/contribute/developer-setup/).
-5. Grupo 01. [*Evidencia del estado base #37406*](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/evidencia-base/issue-37406/README.md), 26 de septiembre de 2026.
-6. Grupo 01. [*Evidencia del estado base #38480*](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/evidencia-base/issue-38480/README.md), 26 de septiembre de 2026.
+5. Grupo 01. [*Evidencia del estado base #37406*](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/evidencia-base/issue-37406/README.md), 26 de septiembre de 2026.
+6. Grupo 01. [*Evidencia del estado base #38480*](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/evidencia-base/issue-38480/README.md), 26 de septiembre de 2026.
 7. Brown, S. [*System context diagram, C4 model*](https://c4model.com/diagrams/system-context). Consultado el 28 de septiembre de 2026.
 8. OWASP Foundation. [*Cross Site Scripting Prevention Cheat Sheet*](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html). Consultado el 4 de octubre de 2026.
 
-**Uso de IA.** Claude y Codex se consultaron como apoyo puntual para evaluar el alcance de los issues, explorar el código, preparar el ambiente reproducible y proponer casos de prueba. Los resultados se verificaron contra la consigna, el repositorio y la evidencia; las decisiones permanecieron bajo responsabilidad del equipo. El [registro de prompts](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/entregable01/PROMPTS_USO_IA.md) contiene versiones normalizadas de las consultas principales.
+**Uso de IA.** Claude y Codex se consultaron como apoyo puntual para evaluar el alcance de los issues, explorar el código, preparar el ambiente reproducible y proponer casos de prueba. Los resultados se verificaron contra la consigna, el repositorio y la evidencia; las decisiones permanecieron bajo responsabilidad del equipo. El [registro de prompts](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/entregable01/PROMPTS_USO_IA.md) contiene versiones normalizadas de las consultas principales.
