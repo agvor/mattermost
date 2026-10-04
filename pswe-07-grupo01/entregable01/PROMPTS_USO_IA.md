@@ -82,3 +82,20 @@ No suponga que un comando funcionó: distinga instrucciones de resultados verifi
 Mantenga actualizado un archivo Markdown que pueda seguir otra persona del equipo
 desde una máquina nueva.
 ```
+
+## 4. Proponer casos de prueba para los criterios de aceptación
+
+```text
+Revise los criterios de aceptación definidos en <RUTA_ENTREGABLE> para los issues
+#37406 y #38480. Proponga casos de prueba positivos, negativos y de regresión que
+puedan ejecutarse sobre Mattermost web.
+
+Incluya permisos por rol, búsqueda, paginación, estados vacíos, vista previa,
+publicación, edición, teclado y foco. Para la sintaxis desplegable, agregue entradas
+incompletas y casos maliciosos relacionados con XSS. Relacione cada prueba con un
+criterio de aceptación y describa el resultado observable esperado.
+
+No genere ni modifique código. Trate los casos como propuestas que deben revisarse
+contra el comportamiento actual, las prácticas de OWASP y las pruebas existentes
+del repositorio antes de incorporarlos.
+```

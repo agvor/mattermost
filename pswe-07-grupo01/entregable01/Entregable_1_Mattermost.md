@@ -13,12 +13,16 @@
 
 **Propósito.** Implementar dos mejoras aprobadas para Mattermost y evaluar el proceso de trabajo del equipo. Cada incremento aportará evidencia sobre planificación, coordinación, revisiones, pruebas y retrabajo. La retrospectiva del primero permitirá seleccionar un ajuste de proceso para aplicarlo y medirlo en el segundo [1, 3].
 
-**Dominio y usuarios meta.** Mattermost es una plataforma de colaboración que permite organizar equipos y canales, intercambiar y buscar mensajes, administrar miembros y asignar roles. Las mejoras se dirigen a quienes necesitan identificar a los administradores de su equipo o publicar y consultar información técnica extensa. Los administradores de equipo y de sistema validarán los permisos.
+**Dominio y usuarios meta.** Mattermost es una plataforma de colaboración de código abierto y autohospedada que permite organizar equipos y canales, intercambiar y buscar mensajes, participar en hilos, administrar miembros y asignar roles. Las mejoras se dirigen a miembros que necesitan identificar a los administradores de su equipo y a personas que publican o consultan información técnica extensa. Los administradores de equipo y de sistema validarán los permisos.
 
 **Estado actual verificado.** El equipo reprodujo ambos problemas en Mattermost Team Edition `12.0.0-dev`, a partir del commit `53211e45b6e63e99a5cc64d1ce1b344e3b64cc51`:
 
 - **[#37406: Add Ability to discover team admin](https://github.com/mattermost/mattermost/issues/37406):** la lista de miembros no identifica a los Team Admins ni permite filtrarlos cuando quien consulta es un miembro ordinario. La búsqueda disponible se limita al texto y la alternativa de la System Console exige privilegios globales. El procedimiento y las capturas están en la [evidencia del estado base](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/evidencia-base/issue-37406/README.md) [2, 5].
 - **[#38480: Collapse Details of a Mattermost Message](https://github.com/mattermost/mattermost/issues/38480):** las etiquetas `<details>` y `<summary>` y el atributo `open` se muestran como texto, sin permitir contraer o expandir el contenido. El Markdown admitido se representa correctamente y el resultado es igual para quien publica y quien lee. El procedimiento y las capturas están en la [evidencia del estado base](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/evidencia-base/issue-38480/README.md) [2, 6].
+
+![Estado actual de los issues #37406 y #38480](evidencia-estado-base.png)
+
+*Figura 1. Estado actual: la lista no identifica a los Team Admins y la sintaxis desplegable se muestra como texto.*
 
 ## 2. Mejora propuesta y alcance
 
@@ -28,9 +32,17 @@ La docente aprobó abordar ambas incidencias como un solo proyecto. Actualmente,
 
 Mostrar una identificación visual del rol Team Admin e incorporar un filtro en las vistas web de miembros. El filtro funcionará con la búsqueda y la paginación, reflejará la membresía real del equipo y respetará las autorizaciones actuales. La vista de Channel Admins servirá como referencia de interacción, no de permisos.
 
+**Motivación.** Un miembro podrá identificar a quién acudir sin escalar la consulta al System Admin. Reutilizar el patrón existente para Channel Admins también mantendrá una interacción consistente.
+
 ### Incremento 2: secciones desplegables en mensajes (#38480)
 
 Incorporar secciones no anidadas en los mensajes web, con un resumen visible y un cuerpo expandible que admita texto, párrafos y bloques de código. El comportamiento será consistente en vista previa, publicación y edición. La sintaxis, inspirada en `details/summary`, no habilitará HTML arbitrario y podrá operarse mediante teclado.
+
+**Motivación.** Los registros, trazas y configuraciones extensas podrán permanecer disponibles sin desplazar la conversación inicial ni obligar a separarlos en otros mensajes o archivos.
+
+![Mockup de las mejoras propuestas para ambos issues](mockup-mejoras-propuestas.png)
+
+*Figura 2. Mockup de las mejoras propuestas. No representa una implementación existente.*
 
 ### Alcance máximo y exclusiones
 
@@ -65,8 +77,8 @@ Estas metas son hipótesis iniciales y podrán ajustarse si los datos lo justifi
 
 ## 4. Retos técnicos y capacidades
 
-- **Roles, búsqueda y paginación:** se seguirá el recorrido de las membresías desde la API y el estado de la aplicación hasta la interfaz para determinar si el filtro requiere cambios en el servidor. Requiere Go, React/TypeScript, permisos y pruebas por rol.
-- **Markdown y sanitización:** se identificarán el analizador y los renderizadores compartidos para definir una extensión mínima y segura. Requiere procesamiento de texto, React y seguridad web.
+- **Roles, búsqueda y paginación:** se seguirá el recorrido de las membresías desde la API hasta la interfaz. Ordenar o filtrar solo en el cliente podría dejar administradores en páginas posteriores, por lo que se evaluará resolverlo en el servidor. Requiere Go, React/TypeScript, permisos y pruebas por rol.
+- **Markdown y sanitización:** se identificarán el analizador y los renderizadores compartidos para definir una extensión acotada que no habilite HTML general. Se incluirán pruebas con entradas maliciosas siguiendo prácticas de prevención de XSS [8]. Requiere procesamiento de texto, React y seguridad web.
 - **Consistencia y regresión:** se cubrirán la vista previa, la publicación, la edición y las listas sin filtros, reutilizando componentes existentes. Requiere pruebas unitarias, integración y accesibilidad.
 - **Coordinación en una base de código amplia:** el trabajo se dividirá en resultados pequeños, con límites al trabajo en curso y revisión previa de dependencias. Requiere Git, revisión de código, CI/CD y comunicación.
 
@@ -75,6 +87,8 @@ Los riesgos iniciales son subestimar los cambios en el servidor o el analizador,
 ## 5. Calendario, hitos y responsables
 
 El plan sigue el calendario oficial: avances en las semanas 6 y 11, y presentación final en la semana 14. Las responsabilidades iniciales podrán rotarse según la carga de trabajo, siempre que el cambio se registre en el tablero. Ningún integrante aprobará una tarea que haya implementado.
+
+*Tabla 1. Integrantes y coordinación inicial del proyecto.*
 
 | Integrante | Usuario | Coordinación inicial |
 |---|---|---|
@@ -101,13 +115,19 @@ El plan sigue el calendario oficial: avances en las semanas 6 y 11, y presentaci
 **Guía de ejecución:** [SETUP_MATTERMOST.md](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/SETUP_MATTERMOST.md)\
 **Evidencia reproducible:** vinculada en la descripción de cada issue.
 
+En esta etapa se verificó la base funcional y no se escribió código para implementar las mejoras.
+
 ![Diagrama C4 de contexto](arquitectura-c4-contexto.png)
+
+*Figura 3. Diagrama C4 de contexto de Mattermost y sus roles de usuario.*
 
 Código fuente: [arquitectura-c4-contexto.mmd](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/entregable01/arquitectura-c4-contexto.mmd).
 
 El diagrama presenta a Mattermost como único sistema de interés. Las personas representan roles, por lo que una misma persona puede actuar como miembro, Team Admin o System Admin. Solo se incluyen relaciones de uso directas. GitHub y CI/CD pertenecen al proceso de desarrollo; Docker y PostgreSQL son detalles internos. Ninguno corresponde a este nivel del modelo C4.
 
 ## 7. Coevaluación
+
+*Tabla 2. Coevaluación y aporte principal de los integrantes.*
 
 | Integrante | Nota | Aporte principal |
 |---|---|---|
@@ -124,5 +144,6 @@ El diagrama presenta a Mattermost como único sistema de interés. Las personas 
 5. Grupo 01. [*Evidencia del estado base #37406*](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/evidencia-base/issue-37406/README.md), 26 de septiembre de 2026.
 6. Grupo 01. [*Evidencia del estado base #38480*](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/evidencia-base/issue-38480/README.md), 26 de septiembre de 2026.
 7. Brown, S. [*System context diagram, C4 model*](https://c4model.com/diagrams/system-context). Consultado el 28 de septiembre de 2026.
+8. OWASP Foundation. [*Cross Site Scripting Prevention Cheat Sheet*](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html). Consultado el 4 de octubre de 2026.
 
-**Uso de IA.** Codex se utilizó como apoyo para analizar la adecuación y el alcance de los issues, contrastar la consigna con la evidencia y revisar la estructura y claridad del documento. Las respuestas se verificaron contra las fuentes del proyecto y las decisiones permanecieron bajo responsabilidad del equipo. El [registro de prompts](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/entregable01/PROMPTS_USO_IA.md) contiene versiones normalizadas y reutilizables de las consultas principales.
+**Uso de IA.** Claude y Codex se consultaron como apoyo puntual para evaluar el alcance de los issues, explorar el código, preparar el ambiente reproducible y proponer casos de prueba. Los resultados se verificaron contra la consigna, el repositorio y la evidencia; las decisiones permanecieron bajo responsabilidad del equipo. El [registro de prompts](https://github.com/agvor/mattermost/blob/base_entregable_01/pswe-07-grupo01/entregable01/PROMPTS_USO_IA.md) contiene versiones normalizadas de las consultas principales.
