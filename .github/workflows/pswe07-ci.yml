@@ -75,7 +75,10 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm run check
       - run: npm run check-types
-      - run: npm run test-ci -- --maxWorkers=2 --coverage=false
+      - name: Pruebas web
+        run: |
+          npm run test --workspace=channels -- --ci --maxWorkers=2 --forceExit --coverage
+          npm run test --workspace=platform/client --workspace=platform/components --workspace=platform/shared -- --ci --maxWorkers=2 --forceExit
       - run: npm run build
       - name: Empaquetar web e identificar la versión
         run: |
