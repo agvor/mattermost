@@ -20,7 +20,7 @@ La instancia se preparó desde una base vacía: antes del escenario tenía cero 
 
 ## 2. Reproducir el ambiente base
 
-Seguir primero [el setup simplificado](../../SETUP_SIMPLIFICADO_MATTERMOST.md) hasta completar ambos builds. Confirmar el commit y el árbol de trabajo:
+Seguir primero [la guía del ambiente](../../SETUP_MATTERMOST.md) hasta completar ambos builds. Confirmar el commit y el árbol de trabajo:
 
 ```bash
 cd "/ruta/al/repositorio/mattermost"

@@ -187,3 +187,18 @@ Reduzca explicaciones repetidas y use la tipografía del entregable 1.
 Mantenga las cosas simples y realistas, conserve el alcance funcional
 y no presente estimaciones o acuerdos pendientes como hechos ejecutados.
 ```
+
+## 9. Revisar una tarea como revisor
+
+```text
+Revise <RUTA_DEL_ENTREGABLE> y los artefactos de <TAREA> como revisor del
+plan descrito en <RUTA_PLAN>. Recalcule las estimaciones, el presupuesto y
+la distribución semanal; compruebe que los enlaces existan en <RAMA> y que
+el PDF corresponda al Markdown. Ejecute las pruebas del script <RUTA_SCRIPT>
+y busque casos del historial que puedan distorsionar las métricas.
+
+Reporte cada hallazgo con su archivo y línea, un caso reproducible y una
+propuesta de corrección. Distinga defectos de pendientes sin evidencia y
+no modifique etiquetas, estados ni incidencias.
+```
+

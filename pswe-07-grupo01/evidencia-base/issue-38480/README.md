@@ -30,7 +30,7 @@ La evidencia debe cubrir:
 | Equipo | `Evidencia base 38480` (`evidencia-38480`) |
 | Canal | `Pruebas details` (`pruebas-details`) |
 
-Para instalar dependencias, construir y ejecutar Mattermost, seguir el [setup simplificado](../../SETUP_SIMPLIFICADO_MATTERMOST.md).
+Para instalar dependencias, construir y ejecutar Mattermost, seguir el [guía del ambiente](../../SETUP_MATTERMOST.md).
 
 Confirmar el commit:
 

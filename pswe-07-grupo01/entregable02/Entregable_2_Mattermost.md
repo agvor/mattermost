@@ -13,7 +13,7 @@ Este documento complementa el [entregable 1](https://github.com/agvor/mattermost
 
 El incremento 1 corresponde a #37406: identificación y filtro de Team Admins. El incremento 2 corresponde a #38480: secciones desplegables en mensajes web. Para el segundo avance se prevé completar el incremento 1 y realizar su retrospectiva. El equipo seleccionará una mejora de proceso para aplicarla y medirla en el incremento 2.
 
-La base funcional es Mattermost Team Edition `12.0.0-dev`, commit `53211e45b6e63e99a5cc64d1ce1b344e3b64cc51`, en el [fork del grupo](https://github.com/agvor/mattermost). Las referencias de trabajo son la [guía de ambiente](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/SETUP_MATTERMOST.md), la evidencia inicial de [#37406](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/evidencia-base/issue-37406/README.md) y [#38480](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/evidencia-base/issue-38480/README.md), y los criterios TA-01 a TA-03, DT-01 a DT-04 y RG-01 del primer avance.
+La base funcional es Mattermost Team Edition `12.0.0-dev`, commit `53211e45b6e63e99a5cc64d1ce1b344e3b64cc51`, en el [fork del grupo](https://github.com/agvor/mattermost). Las referencias de trabajo son la [guía de ambiente](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/SETUP_MATTERMOST.md), la evidencia inicial de [#37406](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/evidencia-base/issue-37406/README.md) y [#38480](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/evidencia-base/issue-38480/README.md), y los criterios TA-01 a TA-03, DT-01 a DT-04 y RG-01 del primer avance [6].
 
 ## 2. Historias, tareas y responsables
 
@@ -267,7 +267,7 @@ Para cada tarea se define un esfuerzo optimista (O), más probable (M) y pesimis
 
 ```text
 E = (O + 4 × M + P) / 6
-H = entero superior de (2 × E) / 2, calculado por tarea
+H = (entero superior de 2 × E) / 2, calculado por tarea
 Costo planificado = H × ₡5.000
 ```
 
@@ -400,7 +400,7 @@ python3 metricas.py
 Para sincronizar también el tablero, usar el número real del proyecto y una sesión con acceso `project`:
 
 ```bash
-python3 metricas.py --sync-project --project-owner agvor --project-number 3
+python3 metricas.py --sync-project --project-owner agvor --project-number 1
 ```
 
 Los reportes se guardan en `salida/`, excluida de Git. Para ejecutar las pruebas locales:

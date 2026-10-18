@@ -23,7 +23,7 @@ function Table(tbl)
     widths = {0.08, 0.46, 0.13, 0.11, 0.12, 0.10}
   elseif first == 'Tarea' then
     widths = {0.14, 0.05, 0.05, 0.05, 0.07, 0.10, 0.54}
-  elseif first == 'Estado de destino' then
+  elseif first == 'Estado' then
     widths = {0.18, 0.24, 0.58}
   elseif first == 'Tipo de cambio' then
     widths = {0.24, 0.76}
