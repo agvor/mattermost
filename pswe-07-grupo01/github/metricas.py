@@ -122,7 +122,19 @@ def business_days(start, end):
     return seconds / 86400
 
 
-def normalize_events(issue, timeline):
+def event_exclusions():
+    """Correcciones explícitas: ID de evento y motivo, conservados en el reporte."""
+    exclusions = json.loads(os.getenv('PSWE07_EXCLUDED_EVENTS') or '{}')
+    if not isinstance(exclusions, dict) or any(
+        not key.isdigit() or not isinstance(reason, str) or not reason.strip()
+        for key, reason in exclusions.items()
+    ):
+        raise ValueError('PSWE07_EXCLUDED_EVENTS debe ser un objeto JSON con IDs numéricos y motivos.')
+    return exclusions
+
+
+def normalize_events(issue, timeline, exclusions=None):
+    exclusions = exclusions or {}
     records, seen = [], set()
     for event in timeline:
         label = (event.get('label') or {}).get('name')
@@ -140,6 +152,7 @@ def normalize_events(issue, timeline):
         actor = (event.get('actor') or {}).get('login', '')
         records.append(dict(issue=issue['number'], event_id=identity, event=kind,
                             label=label or '', state=EVENT_STATES.get(label, ''), actor=actor,
+                            excluded_reason=exclusions.get(identity, ''),
                             review_started=(label in (REVIEW_START_LABEL, 'flujo:en-revision')),
                             at=timestamp(event['created_at']).isoformat(),
                             evidence=f'{issue["html_url"]}#event-{identity}'))
@@ -149,29 +162,34 @@ def normalize_events(issue, timeline):
 def transitions(events):
     result = []
     for event in events:
-        if event['event'] == 'labeled' and event['state']:
+        if event['event'] == 'labeled' and event['state'] and not event.get('excluded_reason'):
             if not result or event['state'] != result[-1]['state']:
                 result.append(event)
     return result
 
 
 def latest_stage(events):
-    return next((e for e in reversed(events) if e['event'] == 'labeled' and e['state']), None)
+    return next((e for e in reversed(events) if e['event'] == 'labeled' and e['state']
+                 and not e.get('excluded_reason')), None)
 
 
 def calculate(issue, events, now):
+    excluded = [e for e in events if e.get('excluded_reason')]
+    events = [e for e in events if not e.get('excluded_reason')]
     changes = transitions(events)
     marker = re.search(r'<!-- pswe07:key=((?:G|TA|DT)-\d\d) -->', issue.get('body') or '')
     key = marker[1] if marker else ''
     group = key.split('-')[0] if key else ''
-    warnings = []
+    warnings = [f'Evento {e["event_id"]} excluido: {e["excluded_reason"]}' for e in excluded]
     def first(state):
         return next((e for e in changes if e['state'] == state), None)
     accepted, delivered = first('Lista para iniciar'), first('Entregada')
     requested = next((e for e in events if e['event'] == 'labeled' and
                       e['label'] in ('flujo:revision', 'flujo:esperando-revision')), None)
-    review = next((e for e in events[events.index(requested)+1:] if e['event'] == 'labeled' and
-                   e.get('review_started')), None) if requested else None
+    review = next((e for e in events if e['event'] == 'labeled' and e.get('review_started')), None)
+    if requested and review and events.index(review) < events.index(requested):
+        warnings.append('El inicio de revisión precede a la solicitud; corregir el evento para medir la espera.')
+        review = None
     # En el flujo nuevo Validación incluye espera y ejecución. En el historial
     # anterior se conserva el evento de inicio efectivo de la primera validación.
     validation = next((e for e in events if e['event'] == 'labeled' and
@@ -206,7 +224,8 @@ def calculate(issue, events, now):
     if not key:
         warnings.append('Falta código de tarea; no se agrupa con TA/DT.')
     age = business_days(timestamp(accepted['at']), now) if accepted and not delivered else None
-    accumulated_wait = business_days(timestamp(requested['at']), now) if requested and not review else None
+    accumulated_wait = (business_days(timestamp(requested['at']), now)
+                        if requested and not review and not delivered and issue.get('state') != 'closed' else None)
     return dict(task=key, group=group, issue=issue['number'], url=issue['html_url'],
                 state=changes[-1]['state'] if changes else 'Sin registro',
                 accepted_at=accepted['at'] if accepted else '', delivered_at=delivered['at'] if delivered else '',
@@ -236,13 +255,14 @@ def summarize(rows):
 def report(api, repo):
     issues = api.pages(f'repos/{repo}/issues?state=all&labels=pswe07,tipo%3Atarea')
     snapshots, rows, all_events = [], [], []
+    exclusions = event_exclusions()
     now = datetime.now(ZONE)
     for issue in issues:
         names = {label['name'] for label in issue['labels']}
         if 'pull_request' in issue or 'pswe07:prueba' in names:
             continue
         timeline = api.pages(f'repos/{repo}/issues/{issue["number"]}/timeline')
-        events = normalize_events(issue, timeline)
+        events = normalize_events(issue, timeline, exclusions)
         row = calculate(issue, events, now)
         rows.append(row)
         all_events.extend(events)
@@ -292,23 +312,28 @@ def sync(api, project_api, repo, owner, number, snapshots):
     status = next(f for f in fields if f.get('name') == 'Status')
     options = {option['name']: option['id'] for option in status['options']}
     items = project_items(project_api, pid)
+    errors = []
     for snapshot in snapshots:
         issue, latest = snapshot['issue'], snapshot['last']
         if not latest:
             continue
         # Reconstruir antes de modificar: no usar un snapshot si hubo otra transición.
-        fresh = normalize_events(issue, api.pages(f'repos/{repo}/issues/{issue["number"]}/timeline'))
+        exclusions = {e['event_id']: e['excluded_reason'] for e in snapshot['events']
+                      if e.get('excluded_reason')}
+        fresh = normalize_events(issue, api.pages(f'repos/{repo}/issues/{issue["number"]}/timeline'), exclusions)
         newest = latest_stage(fresh)
         if not newest or newest['event_id'] != latest['event_id']:
             print(f'Issue {issue["number"]}: cambio concurrente; se sincronizará en la próxima ejecución.')
             continue
         item = items.get(issue['node_id'])
         if not item:
-            raise ValueError(f'Issue {issue["number"]} no está en el proyecto. Añada la incidencia al proyecto.')
+            errors.append(f'Issue {issue["number"]} no está en el proyecto. Añada la incidencia al proyecto.')
+            continue
         current = next((value.get('name') for value in item['fieldValues']['nodes']
                         if (value.get('field') or {}).get('id') == status['id']), None)
         if latest['state'] not in options:
-            raise ValueError(f'Falta el estado {latest["state"]}. Configure esa opción en el campo Status del proyecto.')
+            errors.append(f'Issue {issue["number"]}: falta el estado {latest["state"]} en Status.')
+            continue
         if current != latest['state']:
             project_api.mutation('updateProjectV2ItemFieldValue', 'UpdateProjectV2ItemFieldValueInput',
                                  dict(projectId=pid, itemId=item['id'], fieldId=status['id'],
@@ -317,6 +342,8 @@ def sync(api, project_api, repo, owner, number, snapshots):
         for label in current_issue['labels']:
             if label['name'] in EVENT_STATES and label['name'] != latest['label']:
                 api.call(f'repos/{repo}/issues/{issue["number"]}/labels/{quote(label["name"], safe="")}', 'DELETE')
+    if errors:
+        raise ValueError('Sincronización incompleta: ' + '; '.join(errors))
     # La entrega y el cierre son decisiones del validador, no del bot ni del merge.
 
 

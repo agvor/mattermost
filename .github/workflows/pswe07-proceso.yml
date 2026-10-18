@@ -36,6 +36,7 @@ jobs:
           PSWE07_PROJECT_TOKEN: ${{ secrets.PSWE07_PROJECT_TOKEN }}
           PSWE07_PROJECT_NUMBER: ${{ vars.PSWE07_PROJECT_NUMBER }}
           PSWE07_PROJECT_OWNER: ${{ vars.PSWE07_PROJECT_OWNER }}
+          PSWE07_EXCLUDED_EVENTS: ${{ vars.PSWE07_EXCLUDED_EVENTS }}
         run: python3 pswe-07-grupo01/github/metricas.py --sync-project
       - name: Publicar resumen de ejecución
         if: always()
