@@ -1,0 +1,168 @@
+name: PSWE-07 CI
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      fallo_controlado:
+        description: Comprobar que el control final rechaza una ejecución fallida
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pswe07-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cambios:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      web: ${{ steps.rutas.outputs.web }}
+      servidor: ${{ steps.rutas.outputs.servidor }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: rutas
+        name: Detectar componentes afectados
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          EVENTO: ${{ github.event_name }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import subprocess
+          base = os.environ['BASE']
+          completo = os.environ['EVENTO'] == 'workflow_dispatch' or not base or set(base) == {'0'}
+          rutas = [] if completo else subprocess.check_output(
+              ['git', 'diff', '--name-only', base, 'HEAD'], text=True).splitlines()
+          completo |= '.github/workflows/pswe07-ci.yml' in rutas
+          web = completo or any(p.startswith('webapp/') or p == '.nvmrc' for p in rutas)
+          servidor = completo or any(p.startswith('server/') for p in rutas)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as salida:
+              salida.write(f'web={str(web).lower()}\nservidor={str(servidor).lower()}\n')
+          PY
+      - name: Probar el cálculo de métricas
+        run: python3 -m unittest discover -s pswe-07-grupo01/github -p 'test_*.py'
+
+  web:
+    needs: cambios
+    if: needs.cambios.outputs.web == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      NODE_OPTIONS: --max_old_space_size=5120
+    defaults:
+      run:
+        working-directory: webapp
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: webapp/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check
+      - run: npm run check-types
+      - run: npm run test-ci -- --maxWorkers=2 --coverage=false
+      - run: npm run build
+      - name: Empaquetar web e identificar la versión
+        run: |
+          printf '%s\n' "$GITHUB_SHA" > channels/dist/PSWE07_SHA
+          tar -czf /tmp/pswe07-web.tar.gz -C channels/dist .
+      - uses: actions/upload-artifact@v6
+        with:
+          name: pswe07-web-${{ github.sha }}
+          path: /tmp/pswe07-web.tar.gz
+          if-no-files-found: error
+          retention-days: 90
+
+  servidor:
+    needs: cambios
+    if: needs.cambios.outputs.servidor == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: mmuser
+          POSTGRES_PASSWORD: mostest_password
+          POSTGRES_DB: mattermost_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    defaults:
+      run:
+        working-directory: server
+    env:
+      TEST_DATABASE_POSTGRESQL_DSN: postgres://mmuser:mostest_password@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: |
+            server/go.sum
+            server/public/go.sum
+      - run: make setup-go-work
+      - name: Comprobar formato Go
+        run: test -z "$(git ls-files -z '*.go' | xargs -0 gofmt -l)"
+      - name: Controles Go de los paquetes de equipos
+        run: go vet ./channels/api4 ./channels/app ./channels/store/sqlstore
+      - name: Pruebas de miembros, roles, permisos y consultas PostgreSQL
+        run: >-
+          go test -count=1 -timeout=30m -p=1
+          ./channels/api4 ./channels/app ./channels/store/sqlstore
+          -run 'Test(GetTeamMember.*|UpdateTeamMember.*|TeamStore.*|SearchUsers)$'
+      - run: make build-linux-amd64 BUILD_NUMBER=pswe07
+      - name: Empaquetar binarios e identificar la versión
+        run: |
+          printf '%s\n' "$GITHUB_SHA" > bin/PSWE07_SHA
+          tar -czf /tmp/pswe07-servidor.tar.gz -C bin mattermost mmctl PSWE07_SHA
+      - uses: actions/upload-artifact@v6
+        with:
+          name: pswe07-servidor-${{ github.sha }}
+          path: /tmp/pswe07-servidor.tar.gz
+          if-no-files-found: error
+          retention-days: 90
+
+  resultado:
+    name: PSWE-07 / requerido
+    if: always()
+    needs: [cambios, web, servidor]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Comprobar todos los resultados
+        env:
+          CAMBIOS: ${{ needs.cambios.result }}
+          WEB_REQUERIDA: ${{ needs.cambios.outputs.web }}
+          SERVIDOR_REQUERIDO: ${{ needs.cambios.outputs.servidor }}
+          WEB: ${{ needs.web.result }}
+          SERVIDOR: ${{ needs.servidor.result }}
+          FALLO_CONTROLADO: ${{ inputs.fallo_controlado || false }}
+        run: |
+          printf 'SHA probado: `%s`\nWeb: %s\nServidor: %s\n' \
+            "$GITHUB_SHA" "$WEB" "$SERVIDOR" >> "$GITHUB_STEP_SUMMARY"
+          test "$CAMBIOS" = success
+          if [ "$WEB_REQUERIDA" = true ]; then test "$WEB" = success; fi
+          if [ "$SERVIDOR_REQUERIDO" = true ]; then test "$SERVIDOR" = success; fi
+          if [ "$FALLO_CONTROLADO" = true ]; then
+            echo '::error::Fallo controlado solicitado para la evidencia de G-02'
+            exit 1
+          fi

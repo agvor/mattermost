@@ -287,6 +287,8 @@ Repetir la posinstalación oficial del paso 4, cerrar completamente WSL con `wsl
 
 ## Referencias
 
+- [CI, métricas, despliegue y recuperación (G-02)](github/CI_CD.md).
+
 - [Mattermost: Developer setup](https://developers.mattermost.com/contribute/developer-setup/)
 - [Microsoft: instalar WSL](https://learn.microsoft.com/windows/wsl/install)
 - [Microsoft: systemd en WSL](https://learn.microsoft.com/windows/wsl/systemd)
