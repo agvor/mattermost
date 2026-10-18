@@ -1,6 +1,11 @@
 name: PSWE-07 · Proceso y métricas
 
 on:
+  push:
+    branches: [master]
+    paths:
+      - pswe-07-grupo01/github/**
+      - .github/workflows/pswe07-proceso.yml
   issues:
     types: [labeled, unlabeled, closed, reopened]
   workflow_dispatch:
