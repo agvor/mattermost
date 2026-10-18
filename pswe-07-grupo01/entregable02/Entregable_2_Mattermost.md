@@ -19,7 +19,13 @@ La base funcional es Mattermost Team Edition `12.0.0-dev`, commit `53211e45b6e63
 
 El plan se organiza en tres historias: preparación y seguimiento (G), identificación de Team Admins (TA) y secciones desplegables (DT). La primera reúne el trabajo necesario para desarrollar y evaluar las dos mejoras funcionales. Cada historia tiene cuatro tareas con un resultado verificable.
 
-Cada tarea tendrá un responsable que realiza el trabajo, un revisor que comprueba el cambio y un validador que verifica su aceptación. Los tres roles se asignan a personas distintas; cualquier cambio se registrará en la incidencia (*issue*). Cada tarea incluye sus pruebas y documentación.
+Cada tarea tendrá tres roles asignados a personas distintas:
+
+- El responsable realiza el trabajo, incorpora las pruebas y la documentación y atiende las correcciones.
+- El revisor comprueba la calidad técnica y documental: examina los cambios, las pruebas y su coherencia con el plan. Su aprobación permite pasar a Validación.
+- El validador comprueba que el resultado funcione y cumpla los criterios de aceptación. Reproduce las comprobaciones y, después de verificar la versión integrada, marca la tarea como Entregada y cierra la incidencia.
+
+Cualquier cambio en la asignación de roles se registrará en la incidencia (*issue*).
 
 Los identificadores de las tablas son códigos del plan. Los números de las incidencias se añadirán al crearlas en el fork. Los criterios de aceptación usan los códigos del entregable 1 y se citan como criterios.
 
@@ -126,7 +132,7 @@ Cada integrante registrará los cambios de etapa añadiendo la etiqueta `flujo:*
 
 El workflow `.github/workflows/pswe07-proceso.yml` retirará las etiquetas de etapas anteriores y actualizará Status en Projects. Usará la fecha, el actor y el identificador de cada evento del historial de GitHub [8, 9]. El script `metricas.py` generará el historial, los valores por tarea y el resumen de métricas en archivos JSON, CSV y Markdown. El anexo A reúne las etiquetas y las instrucciones de configuración y consulta.
 
-La medición se ejecutará al cambiar etiquetas, cerrar o reabrir incidencias, además de una ejecución semanal y la opción manual. Juan Ignacio conservará una copia de los reportes utilizados en cada entrega. Cada integrante registrará sus horas efectivas por persona, actividad y minutos trabajados.
+La medición se ejecutará al cambiar etiquetas, cerrar o reabrir incidencias, además de una ejecución semanal y la opción manual. Juan Ignacio conservará una copia de los reportes utilizados en cada entrega. Cada integrante actualizará su comentario de esfuerzo en la incidencia al terminar cada sesión, según el anexo A.5.
 
 El script cuenta con pruebas locales. La activación y la comprobación en GitHub se realizarán en G-02. El enlace al tablero y los números de las incidencias se incorporarán al documento durante la configuración.
 
@@ -408,6 +414,53 @@ Los reportes se guardan en `salida/`, excluida de Git. Para ejecutar las pruebas
 ```bash
 python3 -m unittest test_metricas -v
 ```
+
+
+### A.4. Corrección de eventos
+
+GitHub conserva los cambios de etiquetas en el historial. Si se añade una etapa por error, retirar la etiqueta no anula ese registro. Para corregirlo:
+
+1. Buscar el ID del evento en `eventos.json` y explicar el error en la incidencia, con su evidencia.
+2. Alexander añadirá el ID y el motivo a la variable de Actions `PSWE07_EXCLUDED_EVENTS`, conservando las entradas existentes.
+3. Ejecutar Run workflow y comprobar el reporte y el tablero.
+
+La variable usa este formato, con el ID real del evento:
+
+```json
+{
+  "123456789": "Etapa añadida por error; ver comentario en la incidencia"
+}
+```
+
+El evento y su motivo seguirán en el reporte, pero quedarán fuera del cálculo y de la sincronización. La variable es opcional y solo se utiliza para corregir errores de registro.
+
+Si `revision:iniciada` se añade antes de entrar a Revisión, el reporte mostrará un aviso y dejará la espera sin calcular. La espera pendiente termina al entregar la tarea. Si una incidencia falta en el proyecto, el script procesa las demás y al final informa el error; la ejecución queda marcada como fallida.
+
+### A.5. Registro del esfuerzo real
+
+Cada integrante mantendrá un comentario en la incidencia por el rol que tenga asignado en esa tarea: responsable, revisor o validador. Creará el comentario al terminar su primera sesión y lo editará al finalizar las siguientes, incluidas las correcciones. La primera línea tendrá este formato:
+
+```text
+usuario: rol: minutos
+```
+
+Los minutos corresponden al total acumulado de esa persona en ese rol. Debajo se añadirá una línea por sesión con la fecha, la actividad y los minutos de trabajo. Ejemplo ficticio:
+
+```text
+agvor: responsable: 90
+
+17/10/2026 — Preparación del tablero — 60 min
+18/10/2026 — Correcciones del documento — 30 min
+```
+
+El revisor y el validador usarán el mismo formato en sus comentarios, con su usuario y rol. Cada persona comprobará que el total de la primera línea coincida con sus sesiones antes de pasar el trabajo al siguiente rol. Si retoma una tarea, actualizará el mismo comentario.
+
+Se registrará el tiempo dedicado a preparar, implementar, probar, documentar, revisar o validar la tarea. Las esperas entre etapas quedan fuera de este registro. Los tiempos estimados de memoria se identificarán como estimaciones retrospectivas. Si falta el dato de algún integrante, quedará pendiente.
+
+Juan Ignacio revisará los comentarios durante el seguimiento semanal y antes de cerrar la tarea. Sumará los tres totales y dividirá entre 60 para actualizar manualmente Esfuerzo real en Projects. Por ejemplo, 90 minutos de ejecución, 30 de revisión y 30 de validación equivalen a 2,5 horas-persona. Al editar un comentario, el campo del proyecto debe actualizarse en la siguiente revisión del esfuerzo.
+
+Este registro permite comparar el esfuerzo previsto con el trabajado, calcular el costo académico a ₡5.000 por hora-persona y ajustar el presupuesto pendiente. Las tres métricas del proceso se calculan con el historial de etiquetas, por separado de las horas trabajadas. Los PR y sus revisiones documentan el trabajo anterior al uso de etiquetas.
+
 
 
 ## Anexo B. Distribución del esfuerzo por tarea
