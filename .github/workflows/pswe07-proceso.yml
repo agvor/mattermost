@@ -1,0 +1,52 @@
+name: PSWE-07 · Proceso y métricas
+
+on:
+  issues:
+    types: [labeled, unlabeled, closed, reopened]
+  workflow_dispatch:
+  schedule:
+    - cron: '17 1 * * 2' # Lunes 19:17 en Costa Rica; puede ejecutarse con demora.
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: pswe07-proceso
+  cancel-in-progress: false
+
+jobs:
+  medir-y-sincronizar:
+    if: >-
+      github.repository == 'agvor/mattermost' &&
+      (github.event_name != 'issues' ||
+       (contains(github.event.issue.labels.*.name, 'pswe07') &&
+        contains(github.event.issue.labels.*.name, 'tipo:tarea') &&
+        !contains(github.event.issue.labels.*.name, 'pswe07:prueba')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - name: Calcular métricas y sincronizar el tablero
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PSWE07_PROJECT_TOKEN: ${{ secrets.PSWE07_PROJECT_TOKEN }}
+          PSWE07_PROJECT_NUMBER: ${{ vars.PSWE07_PROJECT_NUMBER }}
+          PSWE07_PROJECT_OWNER: ${{ vars.PSWE07_PROJECT_OWNER }}
+        run: python3 pswe-07-grupo01/github/metricas.py --sync-project
+      - name: Publicar resumen de ejecución
+        if: always()
+        run: |
+          if [ -f pswe-07-grupo01/github/salida/reporte.md ]; then
+            cat pswe-07-grupo01/github/salida/reporte.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: pswe07-metricas-${{ github.run_id }}
+          path: pswe-07-grupo01/github/salida/
+          if-no-files-found: warn
+          retention-days: 90

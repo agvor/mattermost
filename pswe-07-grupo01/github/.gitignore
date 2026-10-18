@@ -1,0 +1,6 @@
+# Archivos generados
+__pycache__/
+salida/
+
+# Herramientas y documentación de uso local
+/local

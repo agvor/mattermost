@@ -1,0 +1,90 @@
+% Fuente editable del Gantt. Fechas inclusivas; h-p es esfuerzo planificado del
+% equipo, redondeado hacia arriba a intervalos de media hora por tarea. El inicio del 12 de octubre es un supuesto de planificación.
+\documentclass[border=8pt]{standalone}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Heros}
+\usepackage{pgfgantt}
+\definecolor{plannavy}{HTML}{243B53}
+\definecolor{planblue}{HTML}{527EA0}
+\definecolor{planteal}{HTML}{378C88}
+\definecolor{planpurple}{HTML}{8872A6}
+\definecolor{plangray}{HTML}{758395}
+\definecolor{planorange}{HTML}{C58A3A}
+\definecolor{plangrid}{HTML}{E6EBF0}
+\definecolor{planmuted}{HTML}{64748B}
+% Tres columnas estables evitan etiquetas largas y cortes de palabras.
+\newcommand{\tarea}[3]{\makebox[4.25cm][l]{#1}\hspace{0.2cm}\makebox[2cm][l]{#2}\hspace{0.2cm}\makebox[0.7cm][r]{#3}}
+\begin{document}
+\begin{ganttchart}[
+    time slot format=isodate,
+    x unit=0.24cm,
+    y unit title=0.56cm,
+    y unit chart=0.60cm,
+    canvas/.append style={draw=none},
+    title label font=\fontsize{10}{12}\selectfont,
+    title/.append style={fill=plangrid!55,draw=white},
+    title label node/.append style={text=plannavy},
+    bar label font=\fontsize{10}{12}\selectfont,
+    bar label node/.append style={text width=7.35cm,align=left,text=plannavy},
+    bar/.append style={draw=none,rounded corners=2pt},
+    bar height=0.42,
+    bar top shift=0.29,
+    milestone/.append style={fill=planorange,draw=none},
+    milestone label font=\fontsize{10}{12}\selectfont,
+    milestone label node/.append style={text width=7.35cm,align=left,text=plannavy},
+    milestone height=0.38,
+    milestone top shift=0.31,
+    link/.style={->,draw=planmuted!75,line width=0.35pt},
+    link bulge=0.22,
+    hgrid={draw=plangrid!70},
+    vgrid={*{6}{draw=none},draw=plangrid},
+    today=none
+]{2026-10-12}{2026-11-30}
+\gantttitle[title/.append style={fill=plannavy},title label node/.append style={text=white}]{Plan de ejecución · Octubre–noviembre 2026}{50} \\
+\gantttitle{Octubre}{20}\gantttitle{Noviembre}{30} \\
+\gantttitle{12 oct.}{7}\gantttitle{19 oct.}{7}\gantttitle{26 oct.}{7}
+\gantttitle{2 nov.}{7}\gantttitle{9 nov.}{7}\gantttitle{16 nov.}{7}
+\gantttitle{23 nov.}{7}\gantttitle{}{1} \\
+\ganttbar[bar/.append style={fill=none,draw=none},bar label node/.append style={text=planmuted}]{\tarea{Tarea}{Responsable}{h-p}}{2026-10-12}{2026-10-12} \\
+\ganttbar[name=G01,bar/.append style={fill=planblue}]{\tarea{G-01 · Plan y tablero}{Alexander}{2}}{2026-10-12}{2026-10-13} \\
+\ganttbar[name=G02,bar/.append style={fill=planblue}]{\tarea{G-02 · CI/CD}{Alexander}{6}}{2026-10-14}{2026-10-19} \\
+\ganttbar[name=TA01,bar/.append style={fill=planteal}]{\tarea{TA-01 · Definición}{José}{1,5}}{2026-10-20}{2026-10-20} \\
+\ganttbar[name=TA02,bar/.append style={fill=planteal}]{\tarea{TA-02 · Consulta y rol}{Alexander}{7}}{2026-10-21}{2026-10-27} \\
+\ganttbar[name=TA03,bar/.append style={fill=planteal}]{\tarea{TA-03 · Filtro}{Alexander}{3,5}}{2026-10-28}{2026-10-30} \\
+\ganttbar[name=TA04,bar/.append style={fill=planteal}]{\tarea{TA-04 · Validación}{Juan Ignacio}{3}}{2026-10-31}{2026-11-02} \\
+\ganttbar[name=G03,bar/.append style={fill=planblue}]{\tarea{G-03 · Retrospectiva}{Juan Ignacio}{3}}{2026-11-03}{2026-11-04} \\
+\ganttbar[name=G04,bar/.append style={fill=planblue}]{\tarea{G-04 · Segundo avance}{Alexander}{5}}{2026-11-05}{2026-11-08} \\
+\ganttmilestone[name=E2]{\tarea{Entrega del avance 2 · 9 nov.}{}{}}{2026-11-09} \\
+\ganttbar[name=DT01,bar/.append style={fill=planpurple}]{\tarea{DT-01 · Definición}{José}{2}}{2026-11-09}{2026-11-10} \\
+\ganttbar[name=DT02,bar/.append style={fill=planpurple}]{\tarea{DT-02 · Desplegable}{José}{9}}{2026-11-11}{2026-11-18} \\
+\ganttbar[name=DT03,bar/.append style={fill=planpurple}]{\tarea{DT-03 · Integración}{José}{4}}{2026-11-19}{2026-11-23} \\
+\ganttbar[name=DT04,bar/.append style={fill=planpurple}]{\tarea{DT-04 · Validación}{Juan Ignacio}{3}}{2026-11-24}{2026-11-25} \\
+\ganttbar[name=C,bar/.append style={fill=plangray}]{\tarea{Cierre y demostración}{Equipo}{6}}{2026-11-26}{2026-11-29} \\
+\ganttmilestone[name=F]{\tarea{Entrega final · 30 nov.}{}{}}{2026-11-30}
+\ganttlink{G01}{G02}
+\ganttlink{G01}{TA01}
+\ganttlink{G02}{TA02}
+\ganttlink{TA01}{TA02}
+\ganttlink{TA02}{TA03}
+\ganttlink{TA03}{TA04}
+\ganttlink{TA04}{G03}
+\ganttlink{G03}{G04}
+\ganttlink{G04}{E2}
+\ganttlink{G03}{DT01}
+\ganttlink{DT01}{DT02}
+\ganttlink{DT02}{DT03}
+\ganttlink{DT03}{DT04}
+\ganttlink{G04}{C}
+\ganttlink{DT04}{C}
+\ganttlink{C}{F}
+\node[anchor=north west,align=left,font=\fontsize{9}{11}\selectfont,text=planmuted]
+  at ([yshift=-0.3cm]current bounding box.south west) {
+  \textcolor{planblue}{\rule{0.22cm}{0.22cm}}\ Preparación y seguimiento\quad
+  \textcolor{planteal}{\rule{0.22cm}{0.22cm}}\ Team Admins\quad
+  \textcolor{planpurple}{\rule{0.22cm}{0.22cm}}\ Mensajes desplegables\quad
+  \textcolor{plangray}{\rule{0.22cm}{0.22cm}}\ Cierre\quad
+  \textcolor{planorange}{$\diamond$}\ Entrega\\[4pt]
+  Barras: ventanas de calendario\quad ·\quad h-p: esfuerzo planificado del equipo\quad ·\quad Flechas: dependencias
+};
+\end{ganttchart}
+\end{document}
