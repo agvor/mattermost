@@ -10,11 +10,21 @@ Mattermost. Ejecuta las pruebas de métricas siempre y selecciona por rutas:
 
 | Componente | Controles |
 |---|---|
-| Web | `npm ci`, lint, tipos, pruebas de todos los workspaces y compilación. Incluye regresión de componentes compartidos. |
+| Web | `npm ci`, lint, tipos, pruebas de TA/DT y regresión, pruebas de client/components/shared y compilación. |
 | Servidor | Formato, `go vet` de API/app/store, pruebas de miembros y roles de equipos, búsquedas de usuarios y consultas de equipos con PostgreSQL; compilación Linux amd64. |
 
-La selección de pruebas Go cubre el alcance actual de TA. Al modificar otros
-paquetes o añadir casos, ampliar la selección del flujo en el mismo PR.
+Las pruebas de `channels` se seleccionan en
+`webapp/channels/jest.config.pswe07.js`: miembros, búsqueda, permisos y estado
+Redux de equipos/usuarios; Markdown, formato de mensajes, vista previa y editor.
+Los patrones incluyen automáticamente las nuevas pruebas dentro de esas rutas.
+Se conservan las suites completas de client/components/shared como regresión de
+dependencias compartidas. No se genera el reporte de porcentajes de cobertura.
+
+Las pruebas existentes comprueban la base; cada mejora debe añadir sus casos de
+aceptación, seguridad, accesibilidad y regresión. Si se modifica un componente
+fuera de las rutas seleccionadas, incluir sus pruebas en la configuración en el
+mismo PR. La selección Go cubre el alcance actual de TA y también debe ampliarse
+si cambian otros paquetes. Lint, tipos y compilación mantienen su alcance completo.
 La ejecución manual y los cambios al flujo verifican ambos componentes y sirven
 para comprobar la base. Los cambios solo de documentación no ejecutan builds.
 Los recorridos E2E y las comprobaciones por rol se validan en cada incremento.

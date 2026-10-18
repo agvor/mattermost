@@ -75,9 +75,9 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm run check
       - run: npm run check-types
-      - name: Pruebas web
+      - name: Pruebas web de TA, DT y regresión
         run: |
-          npm run test --workspace=channels -- --ci --maxWorkers=2 --forceExit --coverage=false
+          npm run test --workspace=channels -- --config=jest.config.pswe07.js --ci --maxWorkers=2 --forceExit --coverage=false
           npm run test --workspace=platform/client --workspace=platform/components --workspace=platform/shared -- --ci --maxWorkers=2 --forceExit
       - run: npm run build
       - name: Empaquetar web e identificar la versión
