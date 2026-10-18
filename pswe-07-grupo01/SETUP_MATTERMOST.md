@@ -2,8 +2,6 @@
 
 Esta guía permite reproducir en Windows el ambiente utilizado por el grupo para desarrollar y validar los issues [#37406](https://github.com/mattermost/mattermost/issues/37406) y [#38480](https://github.com/mattermost/mattermost/issues/38480). Se utiliza **WSL2 con Ubuntu 24.04**, **VS Code conectado a WSL** y **Docker Engine instalado dentro de WSL**; no se requiere Docker Desktop.
 
-Para macOS en Apple Silicon, seguir la [guía para macOS](SETUP_MATTERMOST_MACOS.md), que usa las mismas versiones y el mismo commit base.
-
 ## Base reproducible
 
 | Elemento | Versión o valor |

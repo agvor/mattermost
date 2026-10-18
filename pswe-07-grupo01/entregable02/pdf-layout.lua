@@ -34,7 +34,7 @@ function Table(tbl)
   elseif first == 'Código' then
     widths = {0.22, 0.26, 0.26, 0.26}
   elseif first == 'Métrica' then
-    widths = {0.16, 0.26, 0.40, 0.18}
+    widths = {0.23, 0.54, 0.23}
   elseif first == 'ID y riesgo' then
     widths = {0.25, 0.18, 0.44, 0.13}
   elseif first == 'Riesgo' then

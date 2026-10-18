@@ -202,35 +202,3 @@ propuesta de corrección. Distinga defectos de pendientes sin evidencia y
 no modifique etiquetas, estados ni incidencias.
 ```
 
-## 10. Corregir el cálculo de métricas con pruebas de regresión
-
-```text
-Corrija en <RUTA_SCRIPT> los defectos reproducidos en <ENLACE_REVISION>
-sin cambiar las definiciones de las métricas del plan. Agregue una prueba
-por defecto, una historia de prueba con devolución y bloqueo y un caso que
-confirme que las etiquetas retiradas por el workflow no se interpretan como
-correcciones. Documente cualquier regla nueva de uso de etiquetas en el anexo.
-```
-
-## 11. Reproducir el ambiente en otro sistema operativo
-
-```text
-Adapte la guía <RUTA_GUIA> a <SISTEMA_OPERATIVO> conservando el commit base
-y las versiones de Go, Node.js y npm. Use alternativas sin licencias de
-pago y respete las políticas del equipo administrado: no modifique
-controles de seguridad del sistema y mantenga la verificación de sumas de
-comprobación. Ejecute los builds y una línea base de pruebas, separe los
-fallos inestables de los defectos y documente los pasos reproducibles.
-```
-
-## 12. Documentar la arquitectura de los componentes afectados
-
-```text
-A partir del código de <COMPONENTE> en el commit <SHA>, identifique los
-componentes de interfaz, las acciones, los endpoints y las consultas que
-intervienen en <FUNCIONALIDAD>. Verifique cada relación en el código y
-represéntela con un diagrama Mermaid limitado a <SUBCONJUNTO_ADMITIDO>.
-Señale dónde se aplican los permisos y no presente decisiones de diseño
-pendientes como hechos.
-```
-

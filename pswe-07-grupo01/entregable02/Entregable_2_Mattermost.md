@@ -147,7 +147,7 @@ En G-02 se reutilizarán los controles aplicables de los flujos de [webapp](http
 | Servidor y API | Si cambia el servidor: formato y controles de Go, pruebas de los paquetes afectados, consulta y permisos, integración con PostgreSQL cuando corresponda y compilación. |
 | Incremento completo | Pruebas E2E de los criterios de aceptación y validación por roles o recorridos del mensaje. Comprobación del ambiente con web y servidor sobre la misma versión; se reutilizará el servidor base si no cambia. |
 
-Un control fallido impedirá integrar el cambio. Una ejecución omitida no contará como prueba realizada. Los fallos y las devoluciones se corregirán en la misma tarea; si hay cambios relevantes después de la aprobación, se revisará y validará de nuevo el SHA actualizado. Las pruebas del servidor se ejecutarán con `TZ=UTC`, como ya fija la webapp con `TZ=Etc/UTC`, porque algunas comparan fechas y fallan cerca de la medianoche local. Una prueba inestable se repetirá de forma aislada y se registrará en la tarea; no se aceptará como exitosa sin esa comprobación.
+Un control fallido impedirá integrar el cambio. Una ejecución omitida no contará como prueba realizada. Los fallos y las devoluciones se corregirán en la misma tarea; si hay cambios relevantes después de la aprobación, se revisará y validará de nuevo el SHA actualizado.
 
 El despliegue será manual al ambiente académico, con artefactos identificados por SHA y recuperación documentada de la última versión validada. G-02 comprobará la respuesta del servidor y un recorrido funcional. Juan Ignacio probará las instrucciones y José revisará la configuración de Alexander. Las pruebas y los reportes se vincularán a la tarea y se conservarán hasta la defensa.
 
@@ -203,11 +203,11 @@ Las métricas se calcularán sobre las tareas TA y DT, por incremento y tipo de 
 
 *Tabla 8. Métricas del proceso, cálculo y metas iniciales.*
 
-| Métrica | Qué mide | Fuente y cálculo | Meta inicial |
-|---|---|---|---|
-| *Lead time* | La duración completa de una tarea, desde que está lista para iniciar hasta que se entrega validada; refleja la fluidez del flujo, incluidas las esperas. | Historial de etiquetas: tiempo desde la primera entrada a Lista para iniciar hasta la primera entrada a Entregada, incluidas las esperas, los bloqueos y las devoluciones. Se reporta la mediana por incremento. | Mediana de 5 días hábiles o menos. |
-| Espera de revisión | El tiempo que una tarea terminada permanece en cola antes de que el revisor comience; identifica la espera entre roles. | Historial de etiquetas: tiempo desde la primera entrada a Revisión hasta la primera adición posterior de `revision:iniciada`, cuando el revisor comienza a trabajar. | Al menos el 80 % de las tareas en 2 días hábiles o menos. |
-| Aceptación sin retrabajo (%CA) | La proporción de tareas aceptadas en su primera validación; refleja la calidad del trabajo entregado y el retrabajo evitado. | `100 × tareas aceptadas en la primera validación / tareas con primera validación concluida`. La primera salida de Validación hacia Entregada cuenta como aceptación; hacia Implementación, como rechazo. Las salidas ambiguas se señalan para revisión y se excluyen del porcentaje hasta aclararlas. | 80 % o más. |
+| Métrica | Fuente y cálculo | Meta inicial |
+|---|---|---|
+| *Lead time* | Historial de etiquetas: tiempo desde la primera entrada a Lista para iniciar hasta la primera entrada a Entregada, incluidas las esperas, los bloqueos y las devoluciones. Se reporta la mediana por incremento. | Mediana de 5 días hábiles o menos. |
+| Espera de revisión | Historial de etiquetas: tiempo desde la primera entrada a Revisión hasta la primera adición posterior de `revision:iniciada`, cuando el revisor comienza a trabajar. | Al menos el 80 % de las tareas en 2 días hábiles o menos. |
+| Aceptación sin retrabajo (%CA) | `100 × tareas aceptadas en la primera validación / tareas con primera validación concluida`. La primera salida de Validación hacia Entregada cuenta como aceptación; hacia Implementación, como rechazo. Las salidas ambiguas se señalan para revisión y se excluyen del porcentaje hasta aclararlas. | 80 % o más. |
 
 Las fechas y horas se registrarán en formato ISO 8601, con la zona `America/Costa_Rica` (UTC-06:00). Para evaluar las metas se contará el tiempo de lunes a viernes, excluyendo los fines de semana; cada 24 horas acumuladas en esos días equivaldrá a un día hábil. Los feriados se incluirán en el cálculo. El esfuerzo efectivo se registrará aparte, según las sesiones de trabajo.
 
@@ -221,52 +221,7 @@ La evidencia disponible comprende el entregable 1, la guía del ambiente y las c
 
 Cada tarea vinculará la historia, los criterios de aceptación, el PR y sus commits, la revisión, los controles de CI, la validación y la entrega. Las capturas indicarán el SHA, el rol de usuario, los pasos y el resultado. Las dificultades y los ajustes se registrarán en la incidencia y se resumirán en el seguimiento semanal. Una comprobación prevista en G-02 es determinar si los flujos originales dependen de secretos o condiciones que requieran adaptación en el fork.
 
-En G-04 se revisará el [C4 de contexto](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/entregable01/arquitectura-c4-contexto.mmd) y se añadirá la vista necesaria para explicar los componentes modificados de la lista de miembros y la API. Los diagramas incluirán su fuente Mermaid y una representación visual. Los cambios del analizador y los renderizadores se documentarán al desarrollar el incremento 2.
-
-La figura 3 presenta los componentes de la lista de miembros y la API que intervienen en el incremento 1, según la versión base. La etiqueta de rol solo se muestra mediante `TeamMembersDropdown` cuando quien consulta puede gestionar miembros, y `GET /teams/{id}/members` oculta `scheme_admin` a quien no tiene `manage_team_roles`. La API de usuarios ya admite los filtros `team_roles` y `roles`; TA-01 evaluará reutilizarla. La vista se actualizará con la solución acordada en TA-02 y TA-03.
-
-```mermaid
-flowchart LR
-    U["Miembro del equipo"] -->|View members| TM["TeamMembersModal"]
-    TM --> ML["MemberListTeam"]
-    ML -->|filas| SL["SearchableUserList"]
-    ML -->|solo con permiso de gestión| DD["TeamMembersDropdown: etiqueta de rol"]
-    ML -->|getProfilesInTeam| UA["GET /api/v4/users?in_team"]
-    ML -->|searchProfiles| SA["POST /api/v4/users/search"]
-    ML -->|getTeamMembers| TA["GET /api/v4/teams/id/members"]
-    TA -->|sin manage_team_roles| SAN["SanitizeRoleData oculta scheme_admin"]
-    UA -->|team_roles y roles| F["applyMultiRoleFilters"]
-    SA -->|team_roles y roles| F
-    F --> DB["PostgreSQL"]
-    TA --> DB
-```
-
-*Figura 3. Componentes y API de la lista de miembros del equipo en la versión base, en una vista de componentes simplificada.*
-
-Fuente editable: [arquitectura-incremento-1.mmd](diagramas/arquitectura-incremento-1.mmd).
-
-### 7.1. Estado del avance al 17 de octubre
-
-En G-01 se han completado los siguientes elementos; la tarea continúa abierta hasta su validación:
-
-- Tablero e incidencias: tres historias ([#3](https://github.com/agvor/mattermost/issues/3), [#4](https://github.com/agvor/mattermost/issues/4) y [#5](https://github.com/agvor/mattermost/issues/5)) con sus doce tareas como subincidencias (#6 a #17), las etiquetas del anexo A y el marcador `pswe07:key` en cada descripción.
-- Protección de `master`: el conjunto de reglas exige PR con una aprobación, integración por *squash*, historial lineal y conversaciones resueltas. Los controles obligatorios se definirán en G-02.
-- Documentación del entregable 2 integrada mediante el [PR #2](https://github.com/agvor/mattermost/pull/2), con revisión aprobada.
-- Workflow `pswe07-proceso.yml` activo en `master` con las variables del proyecto. Su primera ejecución y el historial de prueba con devolución y bloqueo siguen pendientes.
-- [Revisión de G-01](https://github.com/agvor/mattermost/issues/6#issuecomment-6245785424): confirmó los cálculos del plan y del presupuesto y los enlaces, e identificó defectos del script de métricas, que se corrigieron con pruebas.
-- Ambiente reproducido también en macOS ([guía](../SETUP_MATTERMOST_MACOS.md)), con una [línea base de pruebas](../evidencia-base/ambiente-macos/README.md) sobre la versión base y capturas de la lista de miembros por rol.
-
-Ninguna tarea ha salido todavía de Pendiente, por lo que aún no hay valores de *lead time*, espera de revisión ni %CA.
-
-Desviación del plan. G-01 tenía como ventana el 12 y 13 de octubre y sigue abierta; G-02, del 14 al 19 de octubre, no ha comenzado. TA-01 depende de G-01 y está prevista para el 20 de octubre. En el seguimiento semanal, el equipo acordará si recupera el retraso dentro de la semana del 19 al 25 de octubre o si desplaza las ventanas de TA-01 y TA-02; la decisión se registrará en las incidencias y en la tabla 6.
-
-### 7.2. Dificultades y respuesta del equipo
-
-- **Integración de G-01 antes de su flujo de etiquetas.** El PR #2 se integró sin que G-01 pasara por Lista para iniciar, Revisión y Validación, por lo que su historial no reflejará la revisión realizada. Las tareas G se reportan aparte de las métricas. Para las siguientes tareas se propone registrar la etapa antes de abrir el PR.
-- **Defectos del script de métricas.** La revisión reprodujo dos casos que distorsionaban las métricas. Una etapa añadida por error y retirada seguía contando como entrega y aceptación. Además, `revision:iniciada` añadida antes de Revisión dejaba la espera sin calcular y sin advertencia. Se corrigieron en `metricas.py`, junto con la sincronización que se detenía si una incidencia no estaba en el proyecto, y se añadieron pruebas, incluida una historia con devolución y bloqueo.
-- **Workflows del repositorio oficial en el fork.** En el PR #2 se ejecutaron Server CI y PR Test Analysis, que terminaron cancelado y omitido. Se abordará en G-02 limitando los flujos al fork, porque una ejecución omitida no cuenta como prueba (sección 4).
-- **Ambiente en macOS.** Un integrante trabaja en macOS con un equipo administrado que bloquea el proxy público de módulos de Go. Se usó Colima en lugar de Docker Desktop y el proxy de módulos autorizado por la organización, sin desactivar la verificación de sumas de comprobación. Los pasos se documentaron en la guía para macOS.
-- **Pruebas inestables.** En la línea base, una prueba del servidor (`GetUserReport`) dependía de la zona horaria y un *snapshot* de la webapp capturó una animación en curso durante la ejecución paralela. Ambos casos se confirmaron con repeticiones aisladas y dieron lugar a la regla de zona horaria y de repetición de la sección 4.
+En G-04 se revisará el [C4 de contexto](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/entregable01/arquitectura-c4-contexto.mmd) y se añadirá la vista necesaria para explicar los componentes modificados de la lista de miembros y la API. Los diagramas incluirán su fuente Mermaid y una representación visual. Los cambios del analizador y los renderizadores se documentarán al desarrollar el incremento 2. La arquitectura de la implementación está pendiente.
 
 ## 8. Riesgos
 
@@ -397,8 +352,6 @@ Las notas y las justificaciones se acordarán entre los tres integrantes según 
 
 Uso de IA. Codex se consultó como apoyo para revisar la planificación, la descomposición de tareas y la coherencia del flujo de trabajo y de CI/CD. Las sugerencias se contrastaron con la consigna, el primer entregable, el repositorio y la documentación oficial. El [registro de prompts](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/entregable02/PROMPTS_USO_IA.md) reúne consultas generales y representativas en formato reutilizable. El equipo conserva la responsabilidad sobre las decisiones, la elaboración de los artefactos y la validación de los resultados.
 
-Claude Code (Anthropic) se utilizó como apoyo de José en la revisión de G-01. Se empleó para verificar cálculos y enlaces, reproducir y corregir los defectos de `metricas.py` con sus pruebas, preparar el ambiente en macOS y ejecutar la línea base de pruebas. También apoyó la elaboración de la figura 3 y la redacción de las secciones 7.1 y 7.2. Los resultados se comprobaron ejecutando las pruebas y contrastándolos con el código de la versión base; los prompts representativos se añadieron al registro.
-
 
 ## Anexo A. Configuración y uso de las métricas
 
@@ -423,7 +376,7 @@ Validación         flujo:validacion
 Entregada          flujo:entregada
 ```
 
-Actions retira las otras etiquetas de etapa y actualiza el tablero. Esperar a que termine antes del siguiente cambio en la misma tarea. El revisor añade `revision:iniciada` una sola vez al comenzar su primera revisión, después de que la tarea entre a Revisión. Para corregir una etapa añadida por error, retirarla dentro de los 15 minutos siguientes, sin añadir otra etapa entretanto; el script la descarta y deja constancia en el reporte. Las devoluciones y los bloqueos se registran según la sección 3.2.
+Actions retira las otras etiquetas de etapa y actualiza el tablero. Esperar a que termine antes del siguiente cambio en la misma tarea. El revisor añade `revision:iniciada` una sola vez al comenzar su primera revisión. Las devoluciones y los bloqueos se registran según la sección 3.2.
 
 ### A.2. Activación
 
