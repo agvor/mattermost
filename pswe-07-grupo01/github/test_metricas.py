@@ -7,6 +7,16 @@ import metricas
 from metricas import STAGE_LABELS, REVIEW_START_LABEL
 
 
+def unlabeled(identity, label, at, actor='agvor'):
+    return dict(id=identity, event='unlabeled', label=dict(name=label),
+                actor=dict(login=actor), created_at=at)
+
+
+def tag(identity, label, at):
+    return dict(id=identity, event='labeled', label=dict(name=label),
+                actor=dict(login='agvor'), created_at=at)
+
+
 def labeled(identity, state, at):
     label = REVIEW_START_LABEL if state == 'Inicio revisión' else next(key for key,value in STAGE_LABELS.items() if value == state)
     return dict(id=identity, event='labeled', label=dict(name=label),
@@ -135,6 +145,94 @@ class MetricTests(unittest.TestCase):
         events = metricas.normalize_events(self.issue,[old,new])
         self.assertEqual(metricas.latest_stage(events)['label'],'flujo:revision')
 
+
+    def test_stage_added_by_mistake_and_removed_is_ignored(self):
+        row = self.calculate([
+            labeled(1, 'Lista para iniciar','2026-10-12T09:00:00-06:00'),
+            labeled(2, 'Validación','2026-10-13T09:00:00-06:00'),
+            labeled(3, 'Entregada','2026-10-13T09:01:00-06:00'),
+            unlabeled(4, 'flujo:entregada','2026-10-13T09:03:00-06:00'),
+            labeled(5, 'Implementación','2026-10-14T09:00:00-06:00'),
+            labeled(6, 'Validación','2026-10-20T09:00:00-06:00'),
+            labeled(7, 'Entregada','2026-10-22T09:00:00-06:00')])
+        self.assertEqual(row['delivered_at'], '2026-10-22T09:00:00-06:00')
+        self.assertEqual(row['first_validation'], 'rechazada')
+        self.assertEqual(row['lead_days'], 8)
+        self.assertIn('retirada', row['warnings'])
+
+    def test_previous_stage_removed_by_workflow_is_not_a_correction(self):
+        row = self.calculate([
+            labeled(1, 'Lista para iniciar','2026-10-12T09:00:00-06:00'),
+            labeled(2, 'Revisión','2026-10-13T09:00:00-06:00'),
+            labeled(3, 'Validación','2026-10-13T09:05:00-06:00'),
+            unlabeled(4, 'flujo:revision','2026-10-13T09:05:30-06:00', actor='github-actions[bot]'),
+            labeled(5, 'Entregada','2026-10-14T09:00:00-06:00')])
+        self.assertEqual(row['review_requested_at'], '2026-10-13T09:00:00-06:00')
+        self.assertEqual(row['first_validation'], 'aceptada')
+        self.assertNotIn('retirada', row['warnings'])
+
+    def test_stage_removed_after_window_is_kept(self):
+        events = metricas.normalize_events(self.issue, [
+            labeled(1, 'Revisión','2026-10-13T09:00:00-06:00'),
+            unlabeled(2, 'flujo:revision','2026-10-13T09:30:00-06:00')])
+        self.assertEqual(metricas.latest_stage(events)['label'], 'flujo:revision')
+
+    def test_review_start_before_request_warns_and_stops_pending_after_delivery(self):
+        row = self.calculate([
+            labeled(1, 'Lista para iniciar','2026-10-12T09:00:00-06:00'),
+            labeled(2, 'Inicio revisión','2026-10-13T09:00:00-06:00'),
+            labeled(3, 'Revisión','2026-10-13T10:00:00-06:00'),
+            labeled(4, 'Validación','2026-10-14T10:00:00-06:00'),
+            labeled(5, 'Entregada','2026-10-15T10:00:00-06:00')])
+        self.assertIsNone(row['review_wait_days'])
+        self.assertIsNone(row['pending_review_days'])
+        self.assertIn('precede a la solicitud', row['warnings'])
+
+    def test_trial_history_with_return_and_block(self):
+        row = self.calculate([
+            labeled(1, 'Lista para iniciar','2026-10-12T09:00:00-06:00'),
+            labeled(2, 'Implementación','2026-10-12T10:00:00-06:00'),
+            tag(3, 'bloqueada','2026-10-12T15:00:00-06:00'),
+            unlabeled(4, 'bloqueada','2026-10-13T09:00:00-06:00'),
+            labeled(5, 'Revisión','2026-10-13T12:00:00-06:00'),
+            labeled(6, 'Inicio revisión','2026-10-14T09:00:00-06:00'),
+            labeled(7, 'Validación','2026-10-14T12:00:00-06:00'),
+            labeled(8, 'Implementación','2026-10-15T09:00:00-06:00'),
+            labeled(9, 'Revisión','2026-10-15T12:00:00-06:00'),
+            labeled(10, 'Validación','2026-10-16T09:00:00-06:00'),
+            labeled(11, 'Entregada','2026-10-16T12:00:00-06:00')])
+        self.assertAlmostEqual(row['lead_days'], 4.125)
+        self.assertAlmostEqual(row['review_wait_days'], 0.875)
+        self.assertEqual(row['first_validation'], 'rechazada')
+        self.assertEqual(row['state'], 'Entregada')
+        self.assertEqual(row['warnings'], '')
+
+    def test_sync_continues_when_an_issue_is_missing_from_the_project(self):
+        timeline = [labeled(1, 'Revisión','2026-10-13T09:00:00-06:00')]
+        first = dict(self.issue, number=10, node_id='issue10')
+        second = dict(self.issue, number=11, node_id='issue11')
+        snapshots = [dict(issue=i, events=metricas.normalize_events(i, timeline),
+                          last=metricas.latest_stage(metricas.normalize_events(i, timeline)))
+                     for i in (first, second)]
+        api = Mock()
+        api.pages.return_value = timeline
+        api.call.return_value = dict(labels=[dict(name='flujo:revision')])
+        project_api = Mock()
+        status = dict(id='status', name='Status',
+                      options=[dict(id='opt-' + name, name=name) for name in STAGE_LABELS.values()])
+        def gql(query, **variables):
+            if 'repositoryOwner' in query:
+                return dict(repositoryOwner=dict(projectV2=dict(id='project')))
+            if 'fields(' in query:
+                return dict(node=dict(fields=dict(nodes=[status])))
+            return dict(node=dict(items=dict(nodes=[dict(id='item11', content=dict(id='issue11'),
+                                                          fieldValues=dict(nodes=[]))],
+                                             pageInfo=dict(hasNextPage=False, endCursor=None))))
+        project_api.gql.side_effect = gql
+        with self.assertRaisesRegex(ValueError, '#10'):
+            metricas.sync(api, project_api, 'agvor/mattermost', 'agvor', 1, snapshots)
+        project_api.mutation.assert_called_once()
+        self.assertEqual(project_api.mutation.call_args.args[2]['itemId'], 'item11')
 
 if __name__ == '__main__':
     unittest.main()

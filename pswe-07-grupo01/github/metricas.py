@@ -31,6 +31,8 @@ LEGACY_LABELS = {
     'flujo:en-validacion': 'Validación',
 }
 EVENT_STATES = {**STAGE_LABELS, **LEGACY_LABELS}
+# Retirar una etapa poco después de añadirla, sin otra etapa entretanto, corrige un error.
+RETRACTION_WINDOW = timedelta(minutes=15)
 
 FIELDS_QUERY = '''query($id:ID!){node(id:$id){... on ProjectV2{
  fields(first:100){nodes{... on ProjectV2Field{id name dataType}
@@ -146,6 +148,28 @@ def normalize_events(issue, timeline):
     return sorted(records, key=lambda e: (e['at'], int(e['event_id']) if e['event_id'].isdigit() else 0))
 
 
+def retracted(events):
+    """Identificadores de etapas añadidas por error y retiradas dentro de RETRACTION_WINDOW."""
+    result = set()
+    for index, event in enumerate(events):
+        if event['event'] != 'labeled' or not event['state']:
+            continue
+        for later in events[index+1:]:
+            if timestamp(later['at']) - timestamp(event['at']) > RETRACTION_WINDOW:
+                break
+            if later['event'] == 'labeled' and later['state']:
+                break
+            if later['event'] == 'unlabeled' and later['label'] == event['label']:
+                result.add(event['event_id'])
+                break
+    return result
+
+
+def effective(events):
+    removed = retracted(events)
+    return [e for e in events if e['event_id'] not in removed]
+
+
 def transitions(events):
     result = []
     for event in events:
@@ -156,15 +180,19 @@ def transitions(events):
 
 
 def latest_stage(events):
-    return next((e for e in reversed(events) if e['event'] == 'labeled' and e['state']), None)
+    return next((e for e in reversed(effective(events)) if e['event'] == 'labeled' and e['state']), None)
 
 
 def calculate(issue, events, now):
+    corrections = len(events) - len(effective(events))
+    events = effective(events)
     changes = transitions(events)
     marker = re.search(r'<!-- pswe07:key=((?:G|TA|DT)-\d\d) -->', issue.get('body') or '')
     key = marker[1] if marker else ''
     group = key.split('-')[0] if key else ''
     warnings = []
+    if corrections:
+        warnings.append(f'{corrections} etapa(s) retirada(s) como corrección; no se consideran.')
     def first(state):
         return next((e for e in changes if e['state'] == state), None)
     accepted, delivered = first('Lista para iniciar'), first('Entregada')
@@ -199,14 +227,20 @@ def calculate(issue, events, now):
         wait = business_days(timestamp(requested['at']), timestamp(review['at']))
     elif any(e.get('review_started') and e['event'] == 'labeled' for e in events) and not requested:
         warnings.append('Falta solicitud de revisión; espera excluida.')
+    elif requested and any(e.get('review_started') and e['event'] == 'labeled'
+                           for e in events[:events.index(requested)]):
+        warnings.append('revision:iniciada precede a la solicitud de revisión; espera excluida. '
+                        'Retirar y volver a añadir la etiqueta al comenzar la revisión.')
     if delivered and not validation:
         warnings.append('Entrega sin entrada a validación; %CA no calculable para esta tarea.')
     if issue.get('state') == 'closed' and not delivered:
         warnings.append('Issue cerrada sin etapa Entregada; no se considera entrega validada.')
     if not key:
         warnings.append('Falta código de tarea; no se agrupa con TA/DT.')
-    age = business_days(timestamp(accepted['at']), now) if accepted and not delivered else None
-    accumulated_wait = business_days(timestamp(requested['at']), now) if requested and not review else None
+    in_progress = not delivered and issue.get('state') != 'closed'
+    age = business_days(timestamp(accepted['at']), now) if accepted and in_progress else None
+    accumulated_wait = (business_days(timestamp(requested['at']), now)
+                        if requested and not review and in_progress else None)
     return dict(task=key, group=group, issue=issue['number'], url=issue['html_url'],
                 state=changes[-1]['state'] if changes else 'Sin registro',
                 accepted_at=accepted['at'] if accepted else '', delivered_at=delivered['at'] if delivered else '',
@@ -292,6 +326,7 @@ def sync(api, project_api, repo, owner, number, snapshots):
     status = next(f for f in fields if f.get('name') == 'Status')
     options = {option['name']: option['id'] for option in status['options']}
     items = project_items(project_api, pid)
+    missing = []
     for snapshot in snapshots:
         issue, latest = snapshot['issue'], snapshot['last']
         if not latest:
@@ -304,7 +339,9 @@ def sync(api, project_api, repo, owner, number, snapshots):
             continue
         item = items.get(issue['node_id'])
         if not item:
-            raise ValueError(f'Issue {issue["number"]} no está en el proyecto. Añada la incidencia al proyecto.')
+            print(f'Issue {issue["number"]} no está en el proyecto; se omite su sincronización.')
+            missing.append(issue['number'])
+            continue
         current = next((value.get('name') for value in item['fieldValues']['nodes']
                         if (value.get('field') or {}).get('id') == status['id']), None)
         if latest['state'] not in options:
@@ -318,6 +355,8 @@ def sync(api, project_api, repo, owner, number, snapshots):
             if label['name'] in EVENT_STATES and label['name'] != latest['label']:
                 api.call(f'repos/{repo}/issues/{issue["number"]}/labels/{quote(label["name"], safe="")}', 'DELETE')
     # La entrega y el cierre son decisiones del validador, no del bot ni del merge.
+    if missing:
+        raise ValueError('Añada al proyecto las incidencias ' + ', '.join(f'#{n}' for n in missing) + '.')
 
 
 def main():

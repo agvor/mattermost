@@ -23,7 +23,7 @@ function Table(tbl)
     widths = {0.08, 0.46, 0.13, 0.11, 0.12, 0.10}
   elseif first == 'Tarea' then
     widths = {0.14, 0.05, 0.05, 0.05, 0.07, 0.10, 0.54}
-  elseif first == 'Estado de destino' then
+  elseif first == 'Estado' then
     widths = {0.18, 0.24, 0.58}
   elseif first == 'Tipo de cambio' then
     widths = {0.24, 0.76}
@@ -34,7 +34,7 @@ function Table(tbl)
   elseif first == 'Código' then
     widths = {0.22, 0.26, 0.26, 0.26}
   elseif first == 'Métrica' then
-    widths = {0.23, 0.54, 0.23}
+    widths = {0.16, 0.26, 0.40, 0.18}
   elseif first == 'ID y riesgo' then
     widths = {0.25, 0.18, 0.44, 0.13}
   elseif first == 'Riesgo' then
