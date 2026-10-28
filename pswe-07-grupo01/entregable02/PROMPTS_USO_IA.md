@@ -202,3 +202,19 @@ propuesta de corrección. Distinga defectos de pendientes sin evidencia y
 no modifique etiquetas, estados ni incidencias.
 ```
 
+
+## 10. Revisar las tareas y preparar una definición
+
+```text
+Revise el estado de las tareas de <REPOSITORIO> asignadas a <USUARIO> según
+el flujo de <RUTA_PLAN>: roles, dependencias, etiquetas, límites de trabajo
+en curso y evidencia de los PR y de CI. Indique qué puede hacer cada rol y
+qué depende de otras personas, sin cambiar etiquetas ni incidencias hasta
+que el equipo lo confirme.
+
+Para <TAREA>, localice en el código los componentes y la API afectados,
+compruebe cada referencia en la versión actual y proponga la solución y
+los casos de aceptación por rol, búsqueda, paginación y resultados vacíos.
+Deje como decisiones abiertas lo que corresponde a otras tareas y mantenga
+la redacción simple.
+```
