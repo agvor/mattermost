@@ -218,3 +218,13 @@ los casos de aceptación por rol, búsqueda, paginación y resultados vacíos.
 Deje como decisiones abiertas lo que corresponde a otras tareas y mantenga
 la redacción simple.
 ```
+
+## TA-03: preparar datos representativos
+
+```text
+Prepare un script para completar el equipo local hasta 60 miembros con la
+distribución acordada: miembros comunes, tres Team Admins, un System Admin,
+un rol doble y un miembro que administre otro equipo. Conserve los usuarios
+y roles originales, evite duplicados al repetir, guarde las contraseñas fuera
+de Git y explique cómo ejecutarlo y utilizar los datos en las capturas.
+```
