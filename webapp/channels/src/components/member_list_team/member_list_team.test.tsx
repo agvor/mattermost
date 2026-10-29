@@ -10,7 +10,9 @@ import {TestHelper} from 'utils/test_helper';
 
 import MemberListTeam from './member_list_team';
 
-jest.mock('components/profile_picture', () => () => null);
+jest.mock('components/profile_picture', () => ({status}: {status?: string}) => (
+    status ? <span role='status'>{status}</span> : null
+));
 jest.mock('components/user_profile', () => ({userId}: {userId: string}) => <span>{userId}</span>);
 jest.mock('components/custom_status/custom_status_emoji', () => () => null);
 jest.mock('components/team_members_dropdown', () => () => <button>{'Manage member'}</button>);
@@ -57,6 +59,36 @@ function row(userId: string) {
 }
 
 describe('MemberListTeam role labels', () => {
+    test.each([true, false])('preserves status and email presentation (email visible: %s)', async (showEmail) => {
+        const props = makeProps();
+        props.users = props.users.map((user) => ({
+            ...user,
+            email: showEmail ? `${user.id}@example.test` : '',
+        }));
+        renderWithContext(<MemberListTeam {...props}/>, {
+            entities: {
+                users: {
+                    statuses: {admin: 'online', system: 'away', both: 'dnd', member: 'offline'},
+                },
+            },
+        });
+
+        await screen.findByText('admin');
+        for (const [id, status] of Object.entries({admin: 'online', system: 'away', both: 'dnd', member: 'offline'})) {
+            expect(row(id).getByRole('status')).toHaveTextContent(status);
+            expect(row(id).queryByText('Email:')).not.toBeInTheDocument();
+            const email = screen.getByText(id).closest('.more-modal__row')!.querySelector('.more-modal__description');
+            expect(email).toHaveTextContent(showEmail ? `${id}@example.test` : '');
+            if (!showEmail) {
+                expect(email?.querySelector('span')).toBeEmptyDOMElement();
+            }
+        }
+        expect(row('admin').getByText('Team Admin')).toBeVisible();
+        expect(row('system').getByText('System Admin')).toBeVisible();
+        expect(row('both').getByText('System Admin')).toBeVisible();
+        expect(row('bot').queryByRole('status')).not.toBeInTheDocument();
+    });
+
     test.each([false, true])('uses the team query despite sanitized memberships (can manage: %s)', async (canManageTeamMembers) => {
         const props = makeProps();
         renderWithContext(

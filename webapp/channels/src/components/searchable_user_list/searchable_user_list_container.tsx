@@ -10,6 +10,7 @@ import type {UserProfile} from '@mattermost/types/users';
 import SearchableUserList from './searchable_user_list';
 
 type Props = {
+    rowComponentType?: React.ComponentProps<typeof SearchableUserList>['rowComponentType'];
     users: UserProfile[] | null;
     usersPerPage: number;
     total: number;

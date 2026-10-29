@@ -32,6 +32,7 @@ type Props = {
     user: UserProfileType;
     status?: string;
     extraInfo?: Array<string | JSX.Element>;
+    roleLabel?: ReactNode;
     actions?: Array<ConnectedComponent<any, any>>;
     actionProps?: {
         mfaEnabled: boolean;
@@ -56,7 +57,7 @@ type Props = {
     userCount?: number;
 };
 
-const UserListRow = ({user, status, extraInfo = [], actions = [], actionProps, actionUserProps = {}, index, totalUsers, userCount}: Props) => {
+const UserListRow = ({user, status, extraInfo = [], roleLabel, actions = [], actionProps, actionUserProps = {}, index, totalUsers, userCount}: Props) => {
     let buttons = null;
     if (actions) {
         buttons = actions.map((Action, actionIndex) => {
@@ -167,6 +168,7 @@ const UserListRow = ({user, status, extraInfo = [], actions = [], actionProps, a
                     <span>{emailProp}</span>
                 </div>
                 {extraInfo}
+                {roleLabel}
             </div>
             <div
                 data-testid='userListItemActions'

@@ -14,10 +14,21 @@ import {isSystemAdmin} from 'mattermost-redux/utils/user_utils';
 
 import SearchableUserList from 'components/searchable_user_list/searchable_user_list_container';
 import TeamMembersDropdown from 'components/team_members_dropdown';
+import UserListRow from 'components/user_list_row';
 
 import Constants from 'utils/constants';
 
 const USERS_PER_PAGE = 50;
+
+// Keep team role labels separate from the admin-console extraInfo formatting.
+function TeamMemberListRow({extraInfo, ...props}: React.ComponentProps<typeof UserListRow>) {
+    return (
+        <UserListRow
+            {...props}
+            roleLabel={extraInfo}
+        />
+    );
+}
 
 type Props = {
     searchTerm: string;
@@ -223,6 +234,7 @@ export default class MemberListTeam extends React.PureComponent<Props, State> {
             <SearchableUserList
                 users={usersToDisplay}
                 extraInfo={extraInfo}
+                rowComponentType={TeamMemberListRow}
                 usersPerPage={USERS_PER_PAGE}
                 total={this.props.totalTeamMembers}
                 nextPage={this.nextPage}
