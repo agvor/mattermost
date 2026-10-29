@@ -11,6 +11,10 @@ import SearchableUserList from './searchable_user_list';
 
 type Props = {
     rowComponentType?: React.ComponentProps<typeof SearchableUserList>['rowComponentType'];
+    initialTerm?: string;
+    filterControl?: React.ReactNode;
+    filter?: string;
+    hasNextPage?: boolean;
     users: UserProfile[] | null;
     usersPerPage: number;
     total: number;
@@ -41,7 +45,7 @@ type Props = {
 };
 
 export default function SearchableUserListContainer(props: Props) {
-    const [term, setTerm] = useState('');
+    const [term, setTerm] = useState(props.initialTerm || '');
     const [page, setPage] = useState(0);
 
     const handleTermChange = (term: string) => {
@@ -61,9 +65,7 @@ export default function SearchableUserListContainer(props: Props) {
     const search = (term: string) => {
         props.search(term);
 
-        if (term !== '') {
-            setPage(0);
-        }
+        setPage(0);
     };
 
     return (

@@ -17,6 +17,10 @@ import UserList from 'components/user_list';
 const NEXT_BUTTON_TIMEOUT = 500;
 
 type Props = {
+    filterControl?: React.ReactNode;
+
+    // When provided, users contains a single server page instead of a cached list.
+    hasNextPage?: boolean;
     users: UserProfile[] | null;
     usersPerPage: number;
     total: number;
@@ -214,18 +218,19 @@ class SearchableUserList extends React.PureComponent<Props, State> {
         let previousButton;
         let usersToDisplay;
 
-        if (this.props.term || !this.props.users) {
+        const serverPagination = this.props.hasNextPage !== undefined;
+        if ((this.props.term && !serverPagination) || !this.props.users) {
             usersToDisplay = this.props.users;
-        } else if (!this.props.term) {
+        } else {
             const pageStart = this.props.page * this.props.usersPerPage;
             let pageEnd = pageStart + this.props.usersPerPage;
             if (this.props.users.length < pageEnd) {
                 pageEnd = this.props.users.length;
             }
 
-            usersToDisplay = this.props.users.slice(pageStart, pageEnd);
+            usersToDisplay = serverPagination ? this.props.users : this.props.users.slice(pageStart, pageEnd);
 
-            if (pageEnd < this.props.total) {
+            if (serverPagination ? this.props.hasNextPage : pageEnd < this.props.total) {
                 nextButton = (
                     <Button
                         id='searchableUserListNextBtn'
@@ -267,7 +272,7 @@ class SearchableUserList extends React.PureComponent<Props, State> {
                 filterRow = this.props.renderFilterRow(this.handleInput);
             } else {
                 filterRow = (
-                    <div className='col-xs-12'>
+                    <div className={this.props.filterControl ? 'col-xs-8' : 'col-xs-12'}>
                         <label
                             className='hidden-label'
                             htmlFor='searchUsersInput'
@@ -295,6 +300,7 @@ class SearchableUserList extends React.PureComponent<Props, State> {
             <div className='filtered-user-list'>
                 <div className='filter-row'>
                     {filterRow}
+                    {this.props.filterControl}
                     <div className='col-sm-12'>
                         <span
                             id='searchableUserListTotal'
