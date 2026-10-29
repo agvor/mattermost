@@ -1,7 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React from 'react';
+import React, {type JSX} from 'react';
+import {FormattedMessage} from 'react-intl';
 
 import * as UserAgent from '@mattermost/shared/utils/user_agent';
 import type {TeamMembership, TeamStats, GetTeamMembersOpts} from '@mattermost/types/teams';
@@ -9,13 +10,25 @@ import type {UserProfile} from '@mattermost/types/users';
 
 import {Teams} from 'mattermost-redux/constants';
 import type {ActionResult} from 'mattermost-redux/types/actions';
+import {isSystemAdmin} from 'mattermost-redux/utils/user_utils';
 
 import SearchableUserList from 'components/searchable_user_list/searchable_user_list_container';
 import TeamMembersDropdown from 'components/team_members_dropdown';
+import UserListRow from 'components/user_list_row';
 
 import Constants from 'utils/constants';
 
 const USERS_PER_PAGE = 50;
+
+// Keep team role labels separate from the admin-console extraInfo formatting.
+function TeamMemberListRow({extraInfo, ...props}: React.ComponentProps<typeof UserListRow>) {
+    return (
+        <UserListRow
+            {...props}
+            roleLabel={extraInfo}
+        />
+    );
+}
 
 type Props = {
     searchTerm: string;
@@ -27,6 +40,7 @@ type Props = {
     totalTeamMembers: number;
     canManageTeamMembers?: boolean;
     actions: {
+        getProfiles: (page: number, perPage: number, options: Record<string, string | boolean>) => Promise<ActionResult<UserProfile[]>>;
         getTeamMembers: (teamId: string, page?: number, perPage?: number, options?: GetTeamMembersOpts) => Promise<ActionResult<TeamMembership[]>>;
         searchProfiles: (term: string, options?: {[key: string]: any}) => Promise<ActionResult<UserProfile[]>>;
         getTeamStats: (teamId: string) => Promise<ActionResult<TeamStats>>;
@@ -39,10 +53,12 @@ type Props = {
 
 type State = {
     loading: boolean;
+    teamAdminIds: Set<string>;
 };
 
 export default class MemberListTeam extends React.PureComponent<Props, State> {
     private searchTimeoutId: number;
+    private unmounted = false;
 
     constructor(props: Props) {
         super(props);
@@ -51,11 +67,13 @@ export default class MemberListTeam extends React.PureComponent<Props, State> {
 
         this.state = {
             loading: true,
+            teamAdminIds: new Set(),
         };
     }
 
     async componentDidMount() {
         await Promise.all([
+            this.loadTeamAdminIds(),
             this.props.actions.loadProfilesAndTeamMembers(0, Constants.PROFILE_CHUNK_SIZE, this.props.currentTeamId, {active: true}),
             this.props.actions.getTeamMembers(this.props.currentTeamId, 0, Constants.DEFAULT_MAX_USERS_PER_TEAM,
                 {
@@ -69,6 +87,8 @@ export default class MemberListTeam extends React.PureComponent<Props, State> {
     }
 
     componentWillUnmount() {
+        this.unmounted = true;
+        clearTimeout(this.searchTimeoutId);
         this.props.actions.setModalSearchTerm('');
     }
 
@@ -112,8 +132,34 @@ export default class MemberListTeam extends React.PureComponent<Props, State> {
         }
     }
 
+    // Membership roles are sanitized for ordinary members. The existing users
+    // endpoint can identify team admins without granting role-management access.
+    loadTeamAdminIds = async () => {
+        const teamId = this.props.currentTeamId;
+        const teamAdminIds = new Set<string>();
+        for (let page = 0; ; page++) {
+            // Fetch sequentially: the current page tells us whether another exists.
+            // eslint-disable-next-line no-await-in-loop
+            const {data} = await this.props.actions.getProfiles(page, USERS_PER_PAGE, {
+                in_team: teamId,
+                team_roles: 'team_admin',
+                active: true,
+            });
+            if (this.unmounted || teamId !== this.props.currentTeamId || !data) {
+                return;
+            }
+            data.forEach((user) => teamAdminIds.add(user.id));
+            if (data.length < USERS_PER_PAGE) {
+                break;
+            }
+        }
+        this.setState({teamAdminIds});
+    };
+
     loadComplete = () => {
-        this.setState({loading: false});
+        if (!this.unmounted) {
+            this.setState({loading: false});
+        }
     };
 
     nextPage = async (page: number) => {
@@ -148,6 +194,7 @@ export default class MemberListTeam extends React.PureComponent<Props, State> {
             };
         } = {};
 
+        const extraInfo: Record<string, JSX.Element[]> = {};
         let usersToDisplay;
         if (this.state.loading) {
             usersToDisplay = null;
@@ -159,6 +206,23 @@ export default class MemberListTeam extends React.PureComponent<Props, State> {
 
                 if (teamMembers[user.id] && user.delete_at === 0) {
                     usersToDisplay.push(user);
+                    if (isSystemAdmin(user.roles)) {
+                        extraInfo[user.id] = [
+                            <FormattedMessage
+                                key='role'
+                                id='team_members_dropdown.systemAdmin'
+                                defaultMessage='System Admin'
+                            />,
+                        ];
+                    } else if (this.state.teamAdminIds.has(user.id)) {
+                        extraInfo[user.id] = [
+                            <FormattedMessage
+                                key='role'
+                                id='team_members_dropdown.teamAdmin'
+                                defaultMessage='Team Admin'
+                            />,
+                        ];
+                    }
                     actionUserProps[user.id] = {
                         teamMember: teamMembers[user.id],
                     };
@@ -169,6 +233,8 @@ export default class MemberListTeam extends React.PureComponent<Props, State> {
         return (
             <SearchableUserList
                 users={usersToDisplay}
+                extraInfo={extraInfo}
+                rowComponentType={TeamMemberListRow}
                 usersPerPage={USERS_PER_PAGE}
                 total={this.props.totalTeamMembers}
                 nextPage={this.nextPage}
