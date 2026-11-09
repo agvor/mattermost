@@ -1,0 +1,19 @@
+C4Container
+    title C4 - Nivel 2: Contenedores del incremento 1 de Mattermost
+
+    Person(user, "Usuario web", "Miembro, Team Admin o System Admin.")
+
+    System_Boundary(mattermost, "Mattermost") {
+        Container(web, "Aplicación web", "React y TypeScript", "Presenta miembros, etiquetas de rol, búsqueda y filtro de administradores.")
+        Container(api, "Servidor Mattermost", "Go - API REST", "Autentica, verifica permisos y consulta miembros y roles por equipo.")
+        ContainerDb(db, "Base de datos", "PostgreSQL", "Almacena usuarios, equipos y membresías con sus roles.")
+    }
+
+    Rel(user, web, "Consulta miembros<br/>y administradores")
+    Rel(web, api, "Consulta<br/>miembros", "HTTP/JSON")
+    Rel(api, db, "Consulta datos<br/>del equipo", "SQL")
+
+    UpdateRelStyle(user, web, $offsetX="10", $offsetY="-60")
+    UpdateRelStyle(web, api, $offsetX="-35", $offsetY="-30")
+    UpdateRelStyle(api, db, $offsetX="-40", $offsetY="-45")
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")

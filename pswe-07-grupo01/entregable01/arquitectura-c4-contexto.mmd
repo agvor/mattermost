@@ -1,14 +1,18 @@
 C4Context
-    title Diagrama C4 de contexto: Mejoras de colaboración en Mattermost
+    title C4 - Nivel 1: Contexto de Mattermost al segundo avance
 
-    Person(member, "Miembro / autor", "Colabora mediante equipos, canales y mensajes.")
+    Person(member, "Miembro / autor", "Publica y consulta mensajes; necesita localizar administradores.")
     Person(team_admin, "Team Admin", "Administra los miembros de su equipo.")
-    Person(system_admin, "System Admin", "Administra la instancia.")
+    Person(system_admin, "System Admin", "Administra la instancia de Mattermost.")
 
-    System(mattermost, "Mattermost", "Colaboración de equipos.")
+    System(mattermost, "Mattermost", "Plataforma de colaboración mediante equipos, canales y mensajes.")
 
-    Rel(member, mattermost, "Colabora en")
-    Rel(team_admin, mattermost, "Administra equipo")
-    Rel(system_admin, mattermost, "Administra instancia")
+    Rel(member, mattermost, "Consulta administradores")
+    Rel(team_admin, mattermost, "Gestiona miembros")
+    Rel(system_admin, mattermost, "Administra<br/>la instancia")
 
-    UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="1")
+    UpdateRelStyle(member, mattermost, $offsetX="-15", $offsetY="-40")
+    UpdateRelStyle(team_admin, mattermost, $offsetX="10", $offsetY="-20")
+    UpdateRelStyle(system_admin, mattermost, $offsetX="-25", $offsetY="-30")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
