@@ -1,5 +1,6 @@
+%%{init: {"c4": {"width": 150, "c4ShapeMargin": 30, "c4ShapePadding": 8, "diagramMarginX": 10, "diagramMarginY": 10, "messageFontSize": 11}}}%%
 C4Container
-    title C4 - Nivel 2: Contenedores del incremento 1 de Mattermost
+    title C4 - Nivel 2: Contenedores de Mattermost
 
     Person(user, "Usuario web", "Miembro, Team Admin o System Admin.")
 
@@ -11,9 +12,9 @@ C4Container
 
     Rel(user, web, "Consulta miembros<br/>y administradores")
     Rel(web, api, "Consulta<br/>miembros", "HTTP/JSON")
-    Rel(api, db, "Consulta datos<br/>del equipo", "SQL")
+    Rel(api, db, "Consulta<br/>datos del<br/>equipo", "SQL")
 
-    UpdateRelStyle(user, web, $offsetX="10", $offsetY="-60")
-    UpdateRelStyle(web, api, $offsetX="-35", $offsetY="-30")
-    UpdateRelStyle(api, db, $offsetX="-40", $offsetY="-45")
-    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
+    UpdateRelStyle(user, web, $offsetX="10", $offsetY="-40")
+    UpdateRelStyle(web, api, $offsetX="-25", $offsetY="-30")
+    UpdateRelStyle(api, db, $offsetX="-25", $offsetY="-35")
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

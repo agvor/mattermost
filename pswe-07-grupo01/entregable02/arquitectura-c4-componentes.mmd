@@ -1,3 +1,4 @@
+%%{init: {"c4": {"width": 150, "c4ShapeMargin": 30, "c4ShapePadding": 8, "diagramMarginX": 10, "diagramMarginY": 10, "messageFontSize": 11}}}%%
 C4Component
     title C4 - Nivel 3: Aplicación web - Consulta de miembros
 
@@ -10,10 +11,10 @@ C4Component
     }
 
     Rel(list, data, "Solicita<br/>datos")
-    Rel(list, view, "Configura<br/>la presentación")
+    Rel(list, view, "Configura<br/>la lista")
     Rel(data, api, "Consulta<br/>miembros y roles", "HTTP/JSON")
 
-    UpdateRelStyle(list, data, $offsetX="-30", $offsetY="-25")
-    UpdateRelStyle(list, view, $offsetX="-50", $offsetY="-35")
-    UpdateRelStyle(data, api, $offsetX="15", $offsetY="-45")
-    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
+    UpdateRelStyle(list, data, $offsetX="-25", $offsetY="-25")
+    UpdateRelStyle(list, view, $offsetX="-25", $offsetY="-25")
+    UpdateRelStyle(data, api, $offsetX="15", $offsetY="-35")
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

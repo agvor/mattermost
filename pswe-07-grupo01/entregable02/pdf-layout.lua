@@ -72,14 +72,24 @@ end
 function Para(paragraph)
   if FORMAT:match('latex') and pandoc.utils.stringify(paragraph):match('^Tabla %d+%.') then
     return {
-      pandoc.RawBlock('latex', '\\Needspace{12\\baselineskip}'),
+      pandoc.RawBlock('latex', '\\Needspace{7\\baselineskip}'),
       paragraph,
       pandoc.RawBlock('latex', '\\nopagebreak[4]')
     }
   end
 end
 
--- Mantener cada diagrama junto con su título, situado debajo como en el avance 1.
+-- Encuadre de los PNG actuales, en puntos de su tamaño original (izq., abajo,
+-- der., arriba). El PDF omite los márgenes y el encabezado rasterizado de los
+-- C4; el pie conserva el nivel, el nombre y el alcance de cada vista.
+-- Las imágenes y las fuentes Mermaid originales permanecen completas.
+local c4_frames = {
+  ['arquitectura-c4-contexto.png'] = {trim = '186bp 249bp 295bp 896bp', height = '0.34', width = '0.80'},
+  ['arquitectura-c4-contenedores.png'] = {trim = '88bp 236bp 280bp 845bp', height = '0.43', width = '0.84'},
+  ['arquitectura-c4-componentes.png'] = {trim = '88bp 237bp 165bp 845bp', height = '0.43', width = '0.84'}
+}
+
+-- Mantener cada diagrama junto con su pie, sin reservar una altura fija.
 function Blocks(blocks)
   if not FORMAT:match('latex') then return nil end
   local result = pandoc.List()
@@ -89,15 +99,20 @@ function Blocks(blocks)
     if current.t == 'Para' and #current.content == 1 and current.content[1].t == 'Image'
         and following and following.t == 'Para'
         and pandoc.utils.stringify(following):match('^Figura %d+%.') then
-      -- Limitar la altura deja espacio para el título en la misma página.
-      local is_process_diagram = pandoc.utils.stringify(following):match('^Figura 1%.')
-      current.content[1].attributes.height = is_process_diagram and '35%' or '75%'
-      result:insert(pandoc.RawBlock('latex', '\\begin{center}\\begin{minipage}{\\linewidth}\\centering'))
-      local latex_image = pandoc.write(pandoc.Pandoc({current}), 'latex')
-      latex_image = latex_image:gsub('\\includegraphics%[', '\\includegraphics[keepaspectratio,')
+      local source = current.content[1].src
+      local frame = c4_frames[pandoc.path.filename(source)]
+      local caption = pandoc.utils.stringify(following)
+      local height = frame and frame.height or (caption:match('^Figura 1%.') and '0.32' or '0.48')
+      local width = frame and frame.width or '1'
+      local options = 'width=' .. width .. '\\linewidth,height=' .. height .. '\\textheight,keepaspectratio'
+      if frame then options = options .. ',trim=' .. frame.trim .. ',clip' end
+      local latex_image = '\\includegraphics[' .. options .. ']{\\detokenize{' .. source .. '}}\\par'
+      local opening = '\\par\\addvspace{0.5\\baselineskip}\\noindent\\begin{minipage}{\\linewidth}\\centering'
+      local closing = '\\end{minipage}\\par\\addvspace{0.5\\baselineskip}'
+      result:insert(pandoc.RawBlock('latex', opening))
       result:insert(pandoc.RawBlock('latex', latex_image))
       result:insert(following)
-      result:insert(pandoc.RawBlock('latex', '\\end{minipage}\\end{center}'))
+      result:insert(pandoc.RawBlock('latex', closing))
       i = i + 2
     else
       result:insert(current)
@@ -110,7 +125,7 @@ end
 function Meta(meta)
   if FORMAT:match('latex') then
     local includes = meta['header-includes'] or pandoc.MetaList({})
-    includes:insert(pandoc.MetaBlocks({pandoc.RawBlock('latex', '\\usepackage{needspace}\n\\usepackage{graphicx}')}))
+    includes:insert(pandoc.MetaBlocks({pandoc.RawBlock('latex', '\\usepackage{needspace}\n\\usepackage{graphicx}\n\\setlength{\\parskip}{4pt plus 1pt minus 1pt}')}))
     meta['header-includes'] = includes
   end
   return meta

@@ -1,5 +1,6 @@
+%%{init: {"c4": {"width": 150, "c4ShapeMargin": 30, "c4ShapePadding": 8, "diagramMarginX": 10, "diagramMarginY": 10, "messageFontSize": 11, "nextLinePaddingX": 210}}}%%
 C4Context
-    title C4 - Nivel 1: Contexto de Mattermost al segundo avance
+    title C4 - Nivel 1: Contexto de Mattermost
 
     Person(member, "Miembro / autor", "Publica y consulta mensajes; necesita localizar administradores.")
     Person(team_admin, "Team Admin", "Administra los miembros de su equipo.")
@@ -7,12 +8,12 @@ C4Context
 
     System(mattermost, "Mattermost", "Plataforma de colaboración mediante equipos, canales y mensajes.")
 
-    Rel(member, mattermost, "Consulta administradores")
-    Rel(team_admin, mattermost, "Gestiona miembros")
+    Rel(member, mattermost, "Consulta<br/>administradores")
+    Rel(team_admin, mattermost, "Gestiona<br/>miembros")
     Rel(system_admin, mattermost, "Administra<br/>la instancia")
 
-    UpdateRelStyle(member, mattermost, $offsetX="-15", $offsetY="-40")
-    UpdateRelStyle(team_admin, mattermost, $offsetX="10", $offsetY="-20")
-    UpdateRelStyle(system_admin, mattermost, $offsetX="-25", $offsetY="-30")
+    UpdateRelStyle(member, mattermost, $offsetX="-110", $offsetY="5")
+    UpdateRelStyle(team_admin, mattermost, $offsetX="10", $offsetY="-15")
+    UpdateRelStyle(system_admin, mattermost, $offsetX="40", $offsetY="-15")
 
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

@@ -178,6 +178,14 @@ La capacidad prevista se mantiene en 4 horas semanales por integrante, 12 horas-
 | 30 de noviembre | Entrega y demostración final. |
 
 
+El Gantt conserva las ventanas de calendario de la línea base, los responsables, el esfuerzo total por tarea y las dependencias. El seguimiento siguiente registra las fechas reales y los ajustes, sin reemplazar los objetivos originales. Las horas incluyen el aporte de los tres roles y no equivalen a jornadas de trabajo.
+
+![Gantt del plan de ejecución](diagramas/plan-gantt.png)
+
+*Figura 2. Gantt de tareas, responsables, esfuerzo estimado, dependencias e hitos del proyecto.*
+
+Fuente editable: [plan-gantt.tex](plan-gantt.tex).
+
 *Tabla 7. Distribución semanal de la línea base, en horas-persona; no representa horas ejecutadas.*
 
 | Semana de 2026 | Alexander | José | Juan Ignacio | Total |
@@ -192,14 +200,6 @@ La capacidad prevista se mantiene en 4 horas semanales por integrante, 12 horas-
 | Total planificado | 22,25 | 18,25 | 14,5 | 55 |
 
 El anexo B detalla el reparto por tarea y rol. El cierre asigna dos horas a cada integrante. Antes de iniciar las tareas se revisará la carga semanal; el uso de contingencia deberá caber en la disponibilidad restante o requerirá reprogramación. La capacidad libre no es esfuerzo presupuestado.
-
-El Gantt conserva las ventanas de calendario de la línea base, los responsables, el esfuerzo total por tarea y las dependencias. El seguimiento siguiente registra las fechas reales y los ajustes, sin reemplazar los objetivos originales. Las horas incluyen el aporte de los tres roles y no equivalen a jornadas de trabajo.
-
-![Gantt del plan de ejecución](diagramas/plan-gantt.png)
-
-*Figura 2. Gantt de tareas, responsables, esfuerzo estimado, dependencias e hitos del proyecto.*
-
-Fuente editable: [plan-gantt.tex](plan-gantt.tex).
 
 ### 5.1. Avance y ajustes al 9 de noviembre
 
@@ -251,6 +251,14 @@ La propuesta se aplicaría desde DT-01. Para medir la espera de validación, el 
 
 ## 7. Evidencia, dificultades y arquitectura
 
+La arquitectura se presenta en tres niveles C4: contexto, contenedores y componentes de la aplicación web. Las vistas se centran en la consulta de miembros del incremento 1. El nivel 1 muestra personas y el sistema; el nivel 2, los contenedores dentro de Mattermost; y el nivel 3, los componentes dentro de la aplicación web y su dependencia del servidor.
+
+Fuentes editables: [contexto](../entregable01/arquitectura-c4-contexto.mmd), [contenedores](arquitectura-c4-contenedores.mmd) y [componentes](arquitectura-c4-componentes.mmd).
+
+![C4 de contexto actualizado](../entregable01/arquitectura-c4-contexto.png)
+
+*Figura 3. C4, nivel 1: contexto de Mattermost y sus usuarios.*
+
 El incremento 1 se validó en `38555bc2cb44be0179a29faceae6960c1eb895fa`, con [CI exitosa](https://github.com/agvor/mattermost/actions/runs/40946449657). El [PR #24](https://github.com/agvor/mattermost/pull/24), integrado en `ecfbfaf2`, añadió la documentación y las nueve capturas. La [evidencia del incremento](../evidencia-incremento1/issue-37406/README.md) compara el antes y el después por rol y registra 23 pruebas web en tres suites, 9 comprobaciones de API y el recorrido manual. La paginación con 55 administradores se cubrió mediante pruebas automatizadas; no se incorporó un spec de Playwright, limitación aceptada en TA-04.
 
 Durante la ejecución se abordaron estas dificultades:
@@ -259,12 +267,6 @@ Durante la ejecución se abordaron estas dificultades:
 - **CI/CD:** los flujos originales requerían adaptación al fork. G-02 preparó controles por componente, comprobados con una [ejecución exitosa](https://github.com/agvor/mattermost/actions/runs/40613453750) y un [fallo controlado](https://github.com/agvor/mattermost/actions/runs/40616136844). Se verificó el despliegue y la recuperación A → B → A. La [validación](https://github.com/agvor/mattermost/issues/7#issuecomment-6486316119) aceptó que la vuelta a A tiene ping y SHA, pero carece de capturas del recorrido funcional posterior.
 - **Implementación:** TA-02 requirió correcciones de revisión y registró un intento de compilación local sin memoria suficiente. La versión integrada se comprobó con CI exitosa y reconstrucción web. Se reutilizó la API existente, sin cambios en el servidor.
 - **Coordinación:** las esperas desplazaron tareas y redujeron el margen del segundo avance. G-03 propone el acuerdo de traspaso descrito en la sección 6.1.
-
-La arquitectura se presenta en tres niveles C4: contexto, contenedores y componentes de la aplicación web. Las vistas se centran en la consulta de miembros del incremento 1. El nivel 1 muestra personas y el sistema; el nivel 2, los contenedores dentro de Mattermost; y el nivel 3, los componentes dentro de la aplicación web y su dependencia del servidor.
-
-![C4 de contexto actualizado](../entregable01/arquitectura-c4-contexto.png)
-
-*Figura 3. C4, nivel 1: contexto de Mattermost y sus usuarios.*
 
 ![C4 de contenedores del incremento 1](diagramas/arquitectura-c4-contenedores.png)
 
@@ -277,8 +279,6 @@ El cambio se concentra en la aplicación web: añade etiquetas y combina el filt
 *Figura 5. C4, nivel 3: componentes de la aplicación web que intervienen en la consulta de miembros.*
 
 `TeamMembersModal` abre `MemberListTeam`, que coordina la consulta, el filtro y las etiquetas de rol. `SearchableUserList` y sus filas presentan el resultado. Las acciones y el estado Redux, junto con `Client4`, permiten reutilizar las consultas existentes al servidor. El menú de gestión sigue disponible según los permisos del usuario.
-
-Fuentes editables: [contexto](../entregable01/arquitectura-c4-contexto.mmd), [contenedores](arquitectura-c4-contenedores.mmd) y [componentes](arquitectura-c4-componentes.mmd).
 
 ## 8. Riesgos
 
