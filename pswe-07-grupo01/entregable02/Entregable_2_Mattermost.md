@@ -387,7 +387,7 @@ La proyección supera el costo base de ₡305.000 en ₡11.666,67, dentro de la 
 
 ## 10. Coevaluación
 
-Las notas se proponen según los aportes registrados en issues y PR. Los tres integrantes deben acordarlas antes de entregar el PDF.
+Las notas fueron acordadas por los tres integrantes el 9 de noviembre de 2026.
 
 *Tabla 14. Coevaluación del equipo.*
 
