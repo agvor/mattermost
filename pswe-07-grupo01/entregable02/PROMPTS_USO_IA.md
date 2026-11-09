@@ -228,3 +228,15 @@ un rol doble y un miembro que administre otro equipo. Conserve los usuarios
 y roles originales, evite duplicados al repetir, guarde las contraseñas fuera
 de Git y explique cómo ejecutarlo y utilizar los datos en las capturas.
 ```
+
+## DT-01: definir la sintaxis y los casos de aceptación
+
+```text
+Para <TAREA>, localice el analizador y los renderizadores de mensajes y las
+vistas que los usan, compruebe cada referencia en la versión actual y
+ejecute el analizador con ejemplos para ver el comportamiento de la base.
+Proponga la sintaxis según <ISSUE> y ejemplos válidos, incompletos, no
+admitidos y maliciosos, con el estado inicial y la variante `open`. Deje
+como decisiones abiertas lo que corresponde a otras tareas y mantenga la
+redacción simple, con el mismo formato de <DEFINICION_ANTERIOR>.
+```
