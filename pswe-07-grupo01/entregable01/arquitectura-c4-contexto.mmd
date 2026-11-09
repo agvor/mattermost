@@ -1,14 +1,19 @@
+%%{init: {"c4": {"width": 150, "c4ShapeMargin": 30, "c4ShapePadding": 8, "diagramMarginX": 10, "diagramMarginY": 10, "messageFontSize": 11, "nextLinePaddingX": 210}}}%%
 C4Context
-    title Diagrama C4 de contexto: Mejoras de colaboración en Mattermost
+    title C4 - Nivel 1: Contexto de Mattermost
 
-    Person(member, "Miembro / autor", "Colabora mediante equipos, canales y mensajes.")
+    Person(member, "Miembro / autor", "Publica y consulta mensajes; necesita localizar administradores.")
     Person(team_admin, "Team Admin", "Administra los miembros de su equipo.")
-    Person(system_admin, "System Admin", "Administra la instancia.")
+    Person(system_admin, "System Admin", "Administra la instancia de Mattermost.")
 
-    System(mattermost, "Mattermost", "Colaboración de equipos.")
+    System(mattermost, "Mattermost", "Plataforma de colaboración mediante equipos, canales y mensajes.")
 
-    Rel(member, mattermost, "Colabora en")
-    Rel(team_admin, mattermost, "Administra equipo")
-    Rel(system_admin, mattermost, "Administra instancia")
+    Rel(member, mattermost, "Consulta<br/>administradores")
+    Rel(team_admin, mattermost, "Gestiona<br/>miembros")
+    Rel(system_admin, mattermost, "Administra<br/>la instancia")
 
-    UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="1")
+    UpdateRelStyle(member, mattermost, $offsetX="-110", $offsetY="5")
+    UpdateRelStyle(team_admin, mattermost, $offsetX="10", $offsetY="-15")
+    UpdateRelStyle(system_admin, mattermost, $offsetX="40", $offsetY="-15")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

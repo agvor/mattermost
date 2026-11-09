@@ -1,0 +1,20 @@
+%%{init: {"c4": {"width": 150, "c4ShapeMargin": 30, "c4ShapePadding": 8, "diagramMarginX": 10, "diagramMarginY": 10, "messageFontSize": 11}}}%%
+C4Component
+    title C4 - Nivel 3: Aplicación web - Consulta de miembros
+
+    Container(api, "Servidor Mattermost", "Go - API REST", "Autentica, verifica permisos y consulta miembros y roles por equipo.")
+
+    Container_Boundary(web, "Aplicación web") {
+        Component(data, "Acceso a datos y estado", "Redux y Client4", "Consulta perfiles, membresías y roles mediante la API existente.")
+        Component(list, "Lista de miembros", "React - MemberListTeam", "Coordina el filtro, la búsqueda, la paginación y las etiquetas de rol.")
+        Component(view, "Presentación de usuarios", "React - SearchableUserList y filas", "Muestra la búsqueda, el selector, los usuarios y sus etiquetas.")
+    }
+
+    Rel(list, data, "Solicita<br/>datos")
+    Rel(list, view, "Configura<br/>la lista")
+    Rel(data, api, "Consulta<br/>miembros y roles", "HTTP/JSON")
+
+    UpdateRelStyle(list, data, $offsetX="-25", $offsetY="-25")
+    UpdateRelStyle(list, view, $offsetX="-25", $offsetY="-25")
+    UpdateRelStyle(data, api, $offsetX="15", $offsetY="-35")
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

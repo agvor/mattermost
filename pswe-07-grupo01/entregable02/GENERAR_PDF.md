@@ -40,6 +40,8 @@ Referencias: [tablas y PDF en Pandoc](https://pandoc.org/MANUAL.html), [filtros 
 
 Los títulos siguen el primer avance: tablas numeradas en cursiva encima y figuras numeradas en cursiva debajo. La exportación reserva espacio para iniciar cada tabla junto a su título y mantiene cada figura junto a su descripción, conservando las proporciones de la imagen.
 
+Los C4 se incorporan desde sus PNG versionados. El filtro ajusta el encuadre solo en el PDF y usa el pie de figura como título, conservando completas las imágenes originales. Los valores de `c4_frames` corresponden a los PNG actuales; si se regeneran, se debe revisar el encuadre.
+
 El calendario Gantt se edita en `plan-gantt.tex`: cada barra declara su identificador, etiqueta, esfuerzo y fechas inclusivas de inicio y fin; `\ganttlink` define dependencias de final a inicio. Este archivo es la fuente del gráfico y debe permanecer en control de versiones. El PNG es un resultado generado. Para reproducir todo el documento, incluido el Gantt actualizado, use `bash generar-pdf.sh`.
 
 Las horas-persona de las etiquetas corresponden al resultado PERT redondeado hacia arriba a intervalos de media hora por tarea; las barras representan ventanas de calendario acordadas para distribuir ese trabajo. Cambiar una estimación no cambia automáticamente las fechas ni calcula una ruta crítica. Al modificar el calendario también deben actualizarse la tabla y la explicación del plan en el Markdown.

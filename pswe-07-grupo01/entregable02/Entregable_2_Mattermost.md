@@ -1,17 +1,17 @@
-# Entregable 2: Proceso y plan de ejecución de mejoras en Mattermost
+# Entregable 2: Avance y mejora del proceso de desarrollo en Mattermost
 
 **Universidad CENFOTEC, Maestría Profesional en Ingeniería del Software**\
 **Curso:** PSWE-07, Procesos y Administración de Software, C3 2026\
 **Docente:** Shirley Ramírez Cordero\
 **Grupo:** Grupo 01\
 **Integrantes:** Alexander Gatica (`agvor`), José Cisneros (`megachivo`) y Juan Ignacio González (`J-IgnacioGC`)\
-**Entrega prevista:** 9 de noviembre de 2026
+**Entrega:** 9 de noviembre de 2026
 
 ## 1. Contexto y alcance
 
-Este documento complementa el [entregable 1](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/entregable01/Entregable_1_Mattermost.md) y detalla las tareas, los responsables, el flujo de desarrollo, las prácticas de integración y entrega (CI/CD) y las métricas del proyecto. El propósito es implementar dos mejoras de Mattermost y evaluar el proceso de trabajo del equipo con evidencia [1, 2].
+Este documento complementa el [entregable 1](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/entregable01/Entregable_1_Mattermost.md) y detalla las tareas, los responsables, el flujo de desarrollo, las prácticas de integración continua y entrega continua (CI/CD) y las métricas del proyecto. El propósito es implementar dos mejoras de Mattermost y evaluar el proceso de trabajo del equipo con evidencia [1, 2].
 
-El incremento 1 corresponde a #37406: identificación y filtro de Team Admins. El incremento 2 corresponde a #38480: secciones desplegables en mensajes web. Para el segundo avance se prevé completar el incremento 1 y realizar su retrospectiva. El equipo seleccionará una mejora de proceso para aplicarla y medirla en el incremento 2.
+El incremento 1 corresponde a #37406: identificación y filtro de Team Admins. El incremento 2 corresponde a #38480: secciones desplegables en mensajes web. El primer incremento está entregado: sus cuatro tareas fueron validadas y cerradas. La evaluación de [G-03 / #8](https://github.com/agvor/mattermost/issues/8) propone reducir las esperas de traspaso entre roles en el incremento 2.
 
 La base funcional es Mattermost Team Edition `12.0.0-dev`, commit `53211e45b6e63e99a5cc64d1ce1b344e3b64cc51`, en el [fork del grupo](https://github.com/agvor/mattermost). Las referencias de trabajo son la [guía de ambiente](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/SETUP_MATTERMOST.md), la evidencia inicial de [#37406](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/evidencia-base/issue-37406/README.md) y [#38480](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/evidencia-base/issue-38480/README.md), y los criterios TA-01 a TA-03, DT-01 a DT-04 y RG-01 del primer avance [6].
 
@@ -19,7 +19,7 @@ La base funcional es Mattermost Team Edition `12.0.0-dev`, commit `53211e45b6e63
 
 El plan se organiza en tres historias: preparación y seguimiento (G), identificación de Team Admins (TA) y secciones desplegables (DT). La primera reúne el trabajo necesario para desarrollar y evaluar las dos mejoras funcionales. Cada historia tiene cuatro tareas con un resultado verificable.
 
-Cada tarea tendrá tres roles asignados a personas distintas:
+Cada tarea tiene tres roles asignados a personas distintas:
 
 - El responsable realiza el trabajo, incorpora las pruebas y la documentación y atiende las correcciones.
 - El revisor comprueba la calidad técnica y documental: examina los cambios, las pruebas y su coherencia con el plan. Su aprobación permite pasar a Validación.
@@ -27,7 +27,7 @@ Cada tarea tendrá tres roles asignados a personas distintas:
 
 Cualquier cambio en la asignación de roles se registrará en la incidencia (*issue*).
 
-Los identificadores de las tablas son códigos del plan. Los números de las incidencias se añadirán al crearlas en el fork. Los criterios de aceptación usan los códigos del entregable 1 y se citan como criterios.
+Los identificadores de las tablas son códigos de tareas del plan. Las tareas G-01 a G-04 corresponden a [#6 a #9](https://github.com/agvor/mattermost/issues/3), TA-01 a TA-04 a [#10 a #13](https://github.com/agvor/mattermost/issues/4), y DT-01 a DT-04 a [#14 a #17](https://github.com/agvor/mattermost/issues/5). Los criterios de aceptación conservan los códigos del entregable 1 y se citan con la palabra «criterio» para distinguirlos de las tareas.
 
 ### 2.1. Historia G: preparar y evaluar el proceso
 
@@ -42,7 +42,7 @@ Como equipo, queremos contar con un ambiente reproducible, un flujo de trabajo y
 | G-03 | Evaluar el incremento 1. Calcular las métricas, analizar las esperas y realizar la retrospectiva. Acordar una mejora de proceso, su responsable y el indicador esperado para el incremento 2. José reproduce los cálculos. | Juan Ignacio | Alexander | José | TA-04 |
 | G-04 | Consolidar el segundo avance. Actualizar el plan, la arquitectura, los riesgos, los costos y las dificultades con la evidencia disponible. Comprobar enlaces y versiones, preparar el PDF y acordar la coevaluación. | Alexander | José | Juan Ignacio | G-03 |
 
-G-01 tendrá revisión y validación manual mientras se configura CI. G-02 se comprobará con la base funcional; el despliegue se repetirá con la versión del incremento 1. La historia G se cerrará al reunir los artefactos y la evidencia exigidos para el segundo avance.
+G-01 se revisó y validó manualmente durante la configuración de CI. G-02 comprobó el despliegue y la recuperación con la base funcional; TA-04 validó la versión del incremento 1. La historia G se cierra al reunir los artefactos y la evidencia exigidos para el segundo avance.
 
 ### 2.2. Historia TA: descubrir administradores del equipo (#37406)
 
@@ -80,7 +80,7 @@ El alcance comprende la interfaz web. Se excluyen nuevos roles o permisos, el re
 
 ## 3. Asignación y ejecución en GitHub Projects
 
-El trabajo seguirá el flujo de la figura 1. Cada tarea conservará su historial de devoluciones y bloqueos.
+El equipo sigue el flujo de la figura 1 y registra las devoluciones y los bloqueos en cada tarea.
 
 ```mermaid
 flowchart TD
@@ -93,17 +93,17 @@ flowchart TD
     V -->|Correcciones| I
 ```
 
-*Figura 1. Flujo de desarrollo previsto, con revisión, validación y devoluciones.*
+*Figura 1. Flujo de desarrollo del equipo, con revisión, validación y devoluciones.*
 
-La etapa Revisión incluye la espera y la revisión del trabajo. Validación incluye la espera, las pruebas de aceptación y la comprobación de la versión integrada.
+La etapa Revisión incluye la espera para iniciar la revisión y la revisión del trabajo. Validación incluye la espera para iniciar las comprobaciones, las pruebas de aceptación y la comprobación de la versión integrada.
 
 ### 3.1. Organización de las incidencias
 
-El tablero se llamará PSWE-07 Grupo 01: Ejecución. Tendrá tres incidencias principales en el fork, una por historia: G, TA y DT. Cada tarea de las tablas se registrará como una subincidencia (*sub-issue*) de GitHub [3]. Las historias TA y DT enlazarán las incidencias originales de Mattermost. Las incidencias principales servirán para consultar el progreso; la medición se realizará sobre sus tareas.
+El [tablero PSWE-07 Grupo 01: Ejecución](https://github.com/users/agvor/projects/1) organiza tres incidencias principales: [G / #3](https://github.com/agvor/mattermost/issues/3), [TA / #4](https://github.com/agvor/mattermost/issues/4) y [DT / #5](https://github.com/agvor/mattermost/issues/5). Las doce tareas están registradas como subincidencias (*sub-issues*) de esas historias [3]. Las historias TA y DT enlazan las incidencias originales de Mattermost. Las incidencias principales servirán para consultar el progreso; la medición se realizará sobre sus tareas.
 
-Alexander cargará las incidencias en G-01. Cada tarea tendrá una sola persona asignada en Assignee, según la tabla. Los campos Revisor y Validador permitirán seleccionar a Alexander, José o Juan Ignacio; Grupo permitirá elegir G, TA o DT [4]. También se registrarán el estado, la fecha objetivo, la estimación y el esfuerzo real en horas-persona. La descripción incluirá el marcador de identificación del anexo A, los criterios de aceptación, las dependencias y los enlaces al *pull request* (PR) y a la evidencia.
+Alexander cargó las incidencias en G-01. Cada tarea tiene una sola persona asignada en Assignee, según la tabla. Los campos Revisor y Validador permiten seleccionar a Alexander, José o Juan Ignacio; Grupo permite elegir G, TA o DT [4]. También se registrarán el estado, la fecha objetivo, la estimación y el esfuerzo real en horas-persona. La descripción incluirá el marcador de identificación del anexo A, los criterios de aceptación, las dependencias y los enlaces al *pull request* (PR) y a la evidencia.
 
-La vista Flujo agrupará las tareas por estado. La vista Plan mostrará historias, tareas, responsables y fechas. Cada PR se enlazará en su tarea. El responsable seguirá asignado durante todo el proceso; el revisor y el validador consultarán sus tareas en el tablero.
+La vista Flujo agrupa las tareas por estado. La vista Plan muestra historias, tareas, responsables y fechas. Cada PR se enlazará en su tarea. El responsable seguirá asignado durante todo el proceso; el revisor y el validador consultarán sus tareas en el tablero.
 
 ### 3.2. Estados y responsables de cada transición
 
@@ -130,19 +130,19 @@ El validador cerrará la incidencia después de comprobar la versión integrada.
 
 Cada integrante registrará los cambios de etapa añadiendo la etiqueta `flujo:*` correspondiente en la incidencia. Esperará a que termine la sincronización antes del siguiente cambio en esa tarea. El revisor añadirá `revision:iniciada` al comenzar su primera revisión y la conservará durante las correcciones. Los comentarios documentarán decisiones, motivos de devolución o bloqueo y enlaces al PR, las pruebas y el SHA validado.
 
-El workflow `.github/workflows/pswe07-proceso.yml` retirará las etiquetas de etapas anteriores y actualizará Status en Projects. Usará la fecha, el actor y el identificador de cada evento del historial de GitHub [8, 9]. El script `metricas.py` generará el historial, los valores por tarea y el resumen de métricas en archivos JSON, CSV y Markdown. El anexo A reúne las etiquetas y las instrucciones de configuración y consulta.
+El workflow `.github/workflows/pswe07-proceso.yml` retira las etiquetas de etapas anteriores y actualiza Status en Projects. Usa la fecha, el actor y el identificador de cada evento del historial de GitHub [8, 9]. El script `metricas.py` genera el historial, los valores por tarea y el resumen de métricas en archivos JSON, CSV y Markdown. El anexo A reúne las etiquetas y las instrucciones de configuración y consulta.
 
-La medición se ejecutará al cambiar etiquetas, cerrar o reabrir incidencias, además de una ejecución semanal y la opción manual. Juan Ignacio conservará una copia de los reportes utilizados en cada entrega. Cada integrante actualizará su comentario de esfuerzo en la incidencia al terminar cada sesión, según el anexo A.5.
+La medición se ejecuta al cambiar etiquetas, cerrar o reabrir incidencias, además de una ejecución semanal y la opción manual. Juan Ignacio conservará una copia de los reportes utilizados en cada entrega. Cada integrante actualizará su comentario de esfuerzo en la incidencia al terminar cada sesión, según el anexo A.5.
 
-El script cuenta con pruebas locales. La activación y la comprobación en GitHub se realizarán en G-02. El enlace al tablero y los números de las incidencias se incorporarán al documento durante la configuración.
+La automatización fue activada y validada en G-01 y G-02. El [PR #19](https://github.com/agvor/mattermost/pull/19) corrigió el tratamiento de eventos erróneos, avisos y sincronización; la validación de G-01 reprodujo 18 pruebas, incluido un historial con devolución y bloqueo. Los resultados del incremento 1 se resumen en la sección 6.1.
 
 ## 4. CI/CD, revisión y pruebas
 
-La rama de integración será `master` del fork del grupo. Cada tarea partirá de su versión actual y usará una rama breve con el prefijo `pswe07/` y su identificador, por ejemplo, `pswe07/G-03`, `pswe07/TA-02` o `pswe07/DT-03`. Se registrará el SHA de partida para relacionar el cambio con la base documentada.
+La rama de integración es `master` del fork del grupo. Cada tarea partirá de su versión actual y usará una rama breve con el prefijo `pswe07/` y su identificador, por ejemplo, `pswe07/G-03`, `pswe07/TA-02` o `pswe07/DT-03`. Se registrará el SHA de partida para relacionar el cambio con la base documentada.
 
-Los PR se dirigirán a `master` del mismo fork, seguirán la plantilla del repositorio y enlazarán la tarea, sus criterios, las pruebas y la evidencia. La integración requerirá revisión aprobada, controles exitosos y validación del resultado. Después se comprobará la versión integrada y se eliminará la rama de la tarea. Los enlaces al PR y a sus commits permanecerán en la incidencia.
+Los PR se dirigen a `master` del mismo fork, siguen la plantilla del repositorio y enlazan la tarea, sus criterios, las pruebas y la evidencia. La integración requerirá revisión aprobada, controles exitosos y validación del resultado. Después se comprobará la versión integrada y se eliminará la rama de la tarea. Los enlaces al PR y a sus commits permanecerán en la incidencia.
 
-En G-02 se reutilizarán los controles aplicables de los flujos de [webapp](https://github.com/agvor/mattermost/blob/master/.github/workflows/webapp-ci.yml) y [servidor](https://github.com/agvor/mattermost/blob/master/.github/workflows/server-ci.yml), adaptando los necesarios para ejecutarlos en el fork. Se limitarán a los componentes modificados y sus dependencias; los servicios de publicación y las integraciones propias del repositorio oficial quedan fuera del alcance académico. Los controles se ejecutarán en los PR a `master` y al integrar los cambios, con resultados identificados por SHA.
+En G-02 se adaptaron los controles aplicables de los flujos de [webapp](https://github.com/agvor/mattermost/blob/master/.github/workflows/webapp-ci.yml) y [servidor](https://github.com/agvor/mattermost/blob/master/.github/workflows/server-ci.yml), mediante el [PR #20](https://github.com/agvor/mattermost/pull/20) y el workflow `pswe07-ci.yml`. Los controles se seleccionan por componentes modificados y sus dependencias; los servicios de publicación y las integraciones propias del repositorio oficial quedan fuera del alcance académico. Los controles se ejecutan en PR a `master`, al integrar y manualmente, con resultados identificados por SHA. La [guía CI/CD](../github/CI_CD.md) detalla comandos, artefactos, despliegue y recuperación. La sección 7 resume la evidencia y sus limitaciones.
 
 *Tabla 5. Verificaciones mínimas de integración y pruebas según el tipo de cambio.*
 
@@ -155,7 +155,7 @@ En G-02 se reutilizarán los controles aplicables de los flujos de [webapp](http
 
 Un control fallido impedirá integrar el cambio. Una ejecución omitida no contará como prueba realizada. Los fallos y las devoluciones se corregirán en la misma tarea; si hay cambios relevantes después de la aprobación, se revisará y validará de nuevo el SHA actualizado.
 
-El despliegue será manual al ambiente académico, con artefactos identificados por SHA y recuperación documentada de la última versión validada. G-02 comprobará la respuesta del servidor y un recorrido funcional. Juan Ignacio probará las instrucciones y José revisará la configuración de Alexander. Las pruebas y los reportes se vincularán a la tarea y se conservarán hasta la defensa.
+El despliegue será manual al ambiente académico, con artefactos identificados por SHA y recuperación documentada de la última versión validada. En G-02, Alexander ejecutó el despliegue y la recuperación; José revisó la configuración y Juan Ignacio validó los registros. Se comprobaron la respuesta del servidor, los SHA y el recorrido funcional, con la limitación de capturas registrada en la sección 7. Las pruebas y los reportes se vincularán a la tarea y se conservarán hasta la defensa.
 
 Los ajustes del proceso también se versionarán: cada cambio en estados, roles, límites de trabajo o controles tendrá motivo, fecha de aplicación e indicador esperado en su incidencia y PR. Si afecta Actions, el PR incluirá el cambio en `.github/workflows/` y el enlace a una ejecución que lo compruebe. La mejora seleccionada en G-03 enlazará esos registros para comparar el proceso anterior y el ajustado.
 
@@ -163,7 +163,7 @@ Los ajustes del proceso también se versionarán: cada cambio en estados, roles,
 
 La capacidad prevista se mantiene en 4 horas semanales por integrante, 12 horas-persona para el equipo. Las fechas de la tabla son objetivos de trabajo. La sección 9 presenta la estimación inicial de esfuerzo mediante PERT. Antes de pasar una tarea a Lista para iniciar, el equipo revisará sus supuestos según el análisis técnico disponible. Si el esfuerzo supera la capacidad, el equipo dividirá las tareas o ajustará las fechas de trabajo y el alcance dentro de las exclusiones acordadas, sin eliminar revisiones ni pruebas [2].
 
-*Tabla 6. Calendario de tareas e hitos del proyecto.*
+*Tabla 6. Calendario objetivo de tareas e hitos; el seguimiento al corte se detalla debajo.*
 
 | Periodo de 2026 | Tareas e hitos |
 |---|---|
@@ -178,7 +178,15 @@ La capacidad prevista se mantiene en 4 horas semanales por integrante, 12 horas-
 | 30 de noviembre | Entrega y demostración final. |
 
 
-*Tabla 7. Distribución semanal prevista, en horas-persona.*
+El Gantt conserva las ventanas de calendario de la línea base, los responsables, el esfuerzo total por tarea y las dependencias. El seguimiento siguiente registra las fechas reales y los ajustes, sin reemplazar los objetivos originales. Las horas incluyen el aporte de los tres roles y no equivalen a jornadas de trabajo.
+
+![Gantt del plan de ejecución](diagramas/plan-gantt.png)
+
+*Figura 2. Gantt de tareas, responsables, esfuerzo estimado, dependencias e hitos del proyecto.*
+
+Fuente editable: [plan-gantt.tex](plan-gantt.tex).
+
+*Tabla 7. Distribución semanal de la línea base, en horas-persona; no representa horas ejecutadas.*
 
 | Semana de 2026 | Alexander | José | Juan Ignacio | Total |
 |---|---:|---:|---:|---:|
@@ -193,17 +201,24 @@ La capacidad prevista se mantiene en 4 horas semanales por integrante, 12 horas-
 
 El anexo B detalla el reparto por tarea y rol. El cierre asigna dos horas a cada integrante. Antes de iniciar las tareas se revisará la carga semanal; el uso de contingencia deberá caber en la disponibilidad restante o requerirá reprogramación. La capacidad libre no es esfuerzo presupuestado.
 
-El Gantt muestra ventanas de calendario, responsables, esfuerzo total por tarea y dependencias. Las horas incluyen el aporte de los tres roles y no equivalen a jornadas de trabajo.
+### 5.1. Avance y ajustes al 9 de noviembre
 
-![Gantt del plan de ejecución](diagramas/plan-gantt.png)
+Los responsables se mantienen según las tablas 1 a 3. A continuación se resumen el avance de las tareas y las fechas registradas.
 
-*Figura 2. Gantt de tareas, responsables, esfuerzo estimado, dependencias e hitos del proyecto.*
+- **G-01 y G-02, Alexander:** entregadas el 27 y 28 de octubre. El plan y sus correcciones quedaron en los PR [#2](https://github.com/agvor/mattermost/pull/2), [#18](https://github.com/agvor/mattermost/pull/18) y [#19](https://github.com/agvor/mattermost/pull/19); CI/CD, en el [#20](https://github.com/agvor/mattermost/pull/20).
+- **TA-01, José:** entregada el 28 de octubre; definición y casos de aceptación en el [PR #21](https://github.com/agvor/mattermost/pull/21).
+- **TA-02 y TA-03, Alexander:** entregadas el 2 de noviembre. Los PR [#22](https://github.com/agvor/mattermost/pull/22) y [#23](https://github.com/agvor/mattermost/pull/23) incorporaron las etiquetas y el filtro.
+- **TA-04, Juan Ignacio:** entregada el 7 de noviembre; José reprodujo el recorrido y el [PR #24](https://github.com/agvor/mattermost/pull/24) incorporó las capturas.
+- **G-03, Juan Ignacio:** entregada el 9 de noviembre. La evaluación del incremento 1 y la mejora de proceso quedaron documentadas en [#8](https://github.com/agvor/mattermost/issues/8).
+- **G-04, Alexander:** entregada el 9 de noviembre. El informe, el PDF y los diagramas C4 se consolidaron en el [PR #25](https://github.com/agvor/mattermost/pull/25), asociado a [#9](https://github.com/agvor/mattermost/issues/9).
 
-Fuente editable: [plan-gantt.tex](plan-gantt.tex).
+La preparación del proceso terminó después de lo previsto y TA-04 se entregó cinco días de calendario después de su objetivo. G-03 se entregó el 9 de noviembre, frente al objetivo del 3–4, lo que redujo el tiempo para consolidar el informe. Las esperas y la respuesta propuesta se analizan en la sección 6.1.
+
+Se mantienen los hitos del 9 y 30 de noviembre. DT aún no tiene implementación entregada: José conserva DT-01 para el 9–10 de noviembre, DT-02 para el 11–18 y DT-03 para el 19–23; Juan Ignacio, DT-04 para el 24–25.
 
 ## 6. Métricas del proceso
 
-Se medirán la duración total del trabajo, la espera de revisión y la aceptación sin retrabajo. La clase 02, diapositivas 7 a 9, explica el lead time, los resultados sin reproceso y la espera en la cola de revisión como elementos para evaluar y mejorar el flujo [2].
+Se miden la duración total del trabajo, la espera de revisión y la aceptación en la primera validación. La clase 02, diapositivas 7 a 9, explica el lead time, los resultados sin reproceso y la espera en la cola de revisión como elementos para evaluar y mejorar el flujo [2].
 
 Las métricas se calcularán sobre las tareas TA y DT, por incremento y tipo de trabajo: definición, implementación o validación integral. La comparación principal usará TA-02 y TA-03 frente a DT-02 y DT-03. Al contar con solo dos tareas de implementación por incremento, se mostrarán sus valores individuales y las diferencias de tamaño y complejidad. Las tareas G se reportarán aparte. Se medirán las incidencias etiquetadas `pswe07` y `tipo:tarea`; se excluirán las etiquetadas `pswe07:prueba`.
 
@@ -213,37 +228,73 @@ Las métricas se calcularán sobre las tareas TA y DT, por incremento y tipo de 
 |---|---|---|
 | *Lead time* | Historial de etiquetas: tiempo desde la primera entrada a Lista para iniciar hasta la primera entrada a Entregada, incluidas las esperas, los bloqueos y las devoluciones. Se reporta la mediana por incremento. | Mediana de 5 días hábiles o menos. |
 | Espera de revisión | Historial de etiquetas: tiempo desde la primera entrada a Revisión hasta la primera adición posterior de `revision:iniciada`, cuando el revisor comienza a trabajar. | Al menos el 80 % de las tareas en 2 días hábiles o menos. |
-| Aceptación sin retrabajo (%CA) | `100 × tareas aceptadas en la primera validación / tareas con primera validación concluida`. La primera salida de Validación hacia Entregada cuenta como aceptación; hacia Implementación, como rechazo. Las salidas ambiguas se señalan para revisión y se excluyen del porcentaje hasta aclararlas. | 80 % o más. |
+| Aceptación en la primera validación (%CA) | `100 × tareas aceptadas en la primera validación / tareas con primera validación concluida`. La primera salida de Validación hacia Entregada cuenta como aceptación; hacia Implementación, como rechazo. Las salidas ambiguas se señalan para revisión y se excluyen del porcentaje hasta aclararlas. | 80 % o más. |
 
 Las fechas y horas se registrarán en formato ISO 8601, con la zona `America/Costa_Rica` (UTC-06:00). Para evaluar las metas se contará el tiempo de lunes a viernes, excluyendo los fines de semana; cada 24 horas acumuladas en esos días equivaldrá a un día hábil. Los feriados se incluirán en el cálculo. El esfuerzo efectivo se registrará aparte, según las sesiones de trabajo.
 
 Juan Ignacio revisará los valores por tarea, el número de observaciones y los denominadores de los porcentajes. El reporte incluirá las tareas abiertas con su antigüedad o espera acumulada, las reaperturas y los datos pendientes de revisión. El cálculo usará las fechas reales del historial de GitHub, la primera entrada a cada etapa medida y el resultado de la primera validación.
 
-En G-03, el equipo usará los registros para representar el flujo observado, identificar las esperas y seleccionar una mejora medible. Ambos incrementos usarán estas definiciones. La comparación considerará las diferencias técnicas y el tamaño reducido de la muestra, sin atribuir causalidad cuando falte evidencia.
+En G-03 se usaron los registros para analizar el flujo observado e identificar las esperas. La evaluación y la mejora propuesta se resumen a continuación. Ambos incrementos usarán estas definiciones. La comparación considerará las diferencias técnicas y el tamaño reducido de la muestra, sin atribuir causalidad cuando falte evidencia.
 
-## 7. Evidencia, arquitectura y estado del avance
+### 6.1. Evaluación del incremento 1 y mejora propuesta
 
-La evidencia disponible comprende el entregable 1, la guía del ambiente y las capturas del comportamiento inicial. El tablero, los PR de las mejoras, los reportes de CI y las mediciones se incorporarán conforme se ejecuten las tareas.
+La [evaluación de G-03](https://github.com/agvor/mattermost/issues/8#issuecomment-6725454185) se basa en el [reporte del 7 de noviembre, ejecución 42400065597](https://github.com/agvor/mattermost/actions/runs/42400065597):
 
-Cada tarea vinculará la historia, los criterios de aceptación, el PR y sus commits, la revisión, los controles de CI, la validación y la entrega. Las capturas indicarán el SHA, el rol de usuario, los pasos y el resultado. Las dificultades y los ajustes se registrarán en la incidencia y se resumirán en el seguimiento semanal. Una comprobación prevista en G-02 es determinar si los flujos originales dependen de secretos o condiciones que requieran adaptación en el fork.
+- **TA, cuatro tareas:** lead time mediano de 3,07 días hábiles; 100 % de revisiones iniciadas en dos días o menos (4/4; máximo 0,88 días); 100 % de aceptación en la primera validación (4/4). Cumple las tres metas.
+- **G-01 y G-02:** lead time mediano de 7,38 días hábiles; ninguna revisión comenzó en dos días hábiles o menos (0/2); ambas tareas se aceptaron en la primera validación (2/2). El grupo solo cumple la meta de aceptación.
 
-En G-04 se revisará el [C4 de contexto](https://github.com/agvor/mattermost/blob/master/pswe-07-grupo01/entregable01/arquitectura-c4-contexto.mmd) y se añadirá la vista necesaria para explicar los componentes modificados de la lista de miembros y la API. Los diagramas incluirán su fuente Mermaid y una representación visual. Los cambios del analizador y los renderizadores se documentarán al desarrollar el incremento 2. La arquitectura de la implementación está pendiente.
+El tablero y las métricas se actualizaron automáticamente, y la validación de G-03 reprodujo los cálculos. La principal dificultad fueron los traspasos: G-01 y G-02 esperaron unos 6,8 días hábiles para iniciar la revisión. En TA-04 transcurrieron 3,17 días hábiles entre la entrada a Validación y la entrega, intervalo que incluye espera y trabajo. TA-02 volvió de Revisión a Implementación y, después de la corrección, fue aceptada en su primera validación. Ese resultado forma parte del 100 %; el indicador no mide la ausencia de correcciones durante todo el proceso.
+
+G-03 propone mencionar al siguiente rol al pasar una tarea a Revisión o Validación, y responder o actuar en un día hábil. Todo el equipo participa y Juan Ignacio da seguimiento. La meta para DT es que al menos el 80 % de las tareas tenga esperas de revisión y validación de un día hábil o menos, con lead time mediano de cinco días o menos.
+
+La propuesta se aplicaría desde DT-01. Para medir la espera de validación, el validador dejará un comentario al iniciar las comprobaciones; Juan Ignacio calculará el intervalo desde la entrada a Validación con la regla de días hábiles de esta sección.
+
+## 7. Evidencia, dificultades y arquitectura
+
+La arquitectura se presenta en tres niveles C4: contexto, contenedores y componentes de la aplicación web. Las vistas se centran en la consulta de miembros del incremento 1. El nivel 1 muestra personas y el sistema; el nivel 2, los contenedores dentro de Mattermost; y el nivel 3, los componentes dentro de la aplicación web y su dependencia del servidor.
+
+Fuentes editables: [contexto](../entregable01/arquitectura-c4-contexto.mmd), [contenedores](arquitectura-c4-contenedores.mmd) y [componentes](arquitectura-c4-componentes.mmd).
+
+![C4 de contexto actualizado](../entregable01/arquitectura-c4-contexto.png)
+
+*Figura 3. C4, nivel 1: contexto de Mattermost y sus usuarios.*
+
+El incremento 1 se validó en `38555bc2cb44be0179a29faceae6960c1eb895fa`, con [CI exitosa](https://github.com/agvor/mattermost/actions/runs/40946449657). El [PR #24](https://github.com/agvor/mattermost/pull/24), integrado en `ecfbfaf2`, añadió la documentación y las nueve capturas. La [evidencia del incremento](../evidencia-incremento1/issue-37406/README.md) compara el antes y el después por rol y registra 23 pruebas web en tres suites, 9 comprobaciones de API y el recorrido manual. La paginación con 55 administradores se cubrió mediante pruebas automatizadas; no se incorporó una prueba E2E en Playwright, limitación aceptada en TA-04.
+
+Durante la ejecución se abordaron estas dificultades:
+
+- **Métricas:** la revisión de G-01 detectó errores en el tratamiento de eventos y la sincronización. El PR #19 los corrigió y Juan Ignacio reprodujo 18 pruebas, incluido un historial con devolución y bloqueo.
+- **CI/CD:** los flujos originales requerían adaptación al fork. G-02 preparó controles por componente, comprobados con una [ejecución exitosa](https://github.com/agvor/mattermost/actions/runs/40613453750) y un [fallo controlado](https://github.com/agvor/mattermost/actions/runs/40616136844). Se verificó el despliegue y la recuperación A → B → A. La [validación](https://github.com/agvor/mattermost/issues/7#issuecomment-6486316119) aceptó que la vuelta a A tiene ping y SHA, pero carece de capturas del recorrido funcional posterior.
+- **Implementación:** TA-02 requirió correcciones de revisión y registró un intento de compilación local sin memoria suficiente. La versión integrada se comprobó con CI exitosa y reconstrucción web. Se reutilizó la API existente, sin cambios en el servidor.
+- **Coordinación:** las esperas desplazaron tareas y redujeron el margen del segundo avance. G-03 propone el acuerdo de traspaso descrito en la sección 6.1.
+
+![C4 de contenedores del incremento 1](diagramas/arquitectura-c4-contenedores.png)
+
+*Figura 4. C4, nivel 2: contenedores que participan en la consulta de miembros y administradores.*
+
+El cambio se concentra en la aplicación web: añade etiquetas y combina el filtro con la búsqueda y la paginación. Reutiliza la API REST del servidor Go, que verifica los permisos y consulta las membresías en PostgreSQL. No se modificaron el servidor ni el esquema de datos. Las secciones desplegables siguen pendientes del incremento 2.
+
+![C4 de componentes web del incremento 1](diagramas/arquitectura-c4-componentes.png)
+
+*Figura 5. C4, nivel 3: componentes de la aplicación web que intervienen en la consulta de miembros.*
+
+`TeamMembersModal` abre `MemberListTeam`, que coordina la consulta, el filtro y las etiquetas de rol. `SearchableUserList` y sus filas presentan el resultado. Las acciones y el estado Redux, junto con `Client4`, permiten reutilizar las consultas existentes al servidor. El menú de gestión sigue disponible según los permisos del usuario.
 
 ## 8. Riesgos
 
 El análisis utiliza la matriz cualitativa de probabilidad e impacto presentada en la clase 06 [2]. La escala elegida para este proyecto es de 1 a 3. En probabilidad, 1 significa poco probable bajo los controles previstos; 2, posible por la incertidumbre técnica o de coordinación; y 3, probable ante señales concretas. En impacto, 1 corresponde a una corrección local sin comprometer un hito o criterio de aceptación; 2, a una replanificación o evidencia incompleta; y 3, a comprometer una entrega, los permisos o la seguridad del contenido. La prioridad es el producto: baja de 1 a 2, media de 3 a 4 y alta de 6 a 9.
 
-La valoración inicial se basa en el alcance acotado, el ambiente ya reproducido y las responsabilidades acordadas. No se interpreta como una frecuencia estadística: se revisará semanalmente y en la retrospectiva. Las razones de cada valoración se explican a continuación.
+La valoración se revisa al 8 de noviembre con la evidencia del incremento 1 y el trabajo DT pendiente. No se interpreta como una frecuencia estadística. Las razones de cada valoración se explican a continuación.
 
-*Tabla 9. Valoración inicial de los riesgos y responsables de seguimiento.*
+*Tabla 9. Riesgos revisados al segundo avance y responsables de seguimiento.*
 
 | ID y riesgo | Probabilidad / impacto / prioridad | Razón de la valoración | Responsable |
 |---|---|---|---|
-| R1. La consulta omite administradores o expone datos sin permiso. | 2 / 3 / 6, alta | Combinar membresías, búsqueda y paginación puede producir omisiones. Se reutilizarán permisos existentes, pero cualquier exposición indebida impediría aceptar la mejora. | Alexander |
+| R1. La consulta omite administradores o expone datos sin permiso. | 1 / 3 / 3, media | El recorrido por roles, la API y la paginación automatizada fueron aceptados en TA-04, sin cambiar permisos del servidor. Persiste el riesgo de regresión y no hay una prueba E2E automatizada de la pantalla. | Alexander |
 | R2. La sección desplegable admite contenido inseguro o difiere entre vistas. | 2 / 3 / 6, alta | La extensión del analizador y su uso en tres recorridos requieren comprobación conjunta. La sintaxis limitada reduce la superficie del cambio; una salida insegura impediría entregar. | José |
-| R3. Actions requiere servicios o secretos no disponibles en el fork. | 2 / 2 / 4, media | Los flujos originales pueden depender del ambiente del proyecto oficial. La adaptación se hará antes del desarrollo funcional, pero podría requerir reprogramar su inicio. | Alexander |
-| R4. Revisiones o retrabajo exceden la disponibilidad del equipo. | 2 / 2 / 4, media | Cada integrante dispone de cuatro horas semanales y participa en distintos roles. Las tareas pequeñas y el límite de trabajo en curso ayudan, aunque una espera puede desplazar tareas dependientes. | Juan Ignacio |
-| R5. Faltan eventos o evidencia para reproducir las métricas. | 1 / 2 / 2, baja | Hay un responsable del registro y una revisión semanal prevista, por lo que se considera poco probable con esos controles. Si ocurre, limita la comparación del proceso. | Juan Ignacio |
+| R3. Actions requiere servicios o secretos no disponibles en el fork. | 1 / 2 / 2, baja | G-02 adaptó CI y comprobó ejecución exitosa, fallo controlado y despliegue. Al cambiar las rutas afectadas en DT habrá que revisar la selección de pruebas. | Alexander |
+| R4. Revisiones o retrabajo exceden la disponibilidad del equipo. | 3 / 2 / 6, alta | Las esperas de G y TA-04 ya desplazaron el plan. José tiene toda su capacidad semanal asignada durante las semanas principales de DT-02. Se propone el acuerdo de traspaso; cualquier reasignación deberá registrarse. | Juan Ignacio |
+| R5. Faltan eventos o evidencia para reproducir las métricas. | 2 / 2 / 4, media | Hay trabajo anterior a las etiquetas y no se distingue el inicio de validación. G-03 enlaza el reporte y propone registrar el inicio mediante comentario para DT. | Juan Ignacio |
 
 *Tabla 10. Señales de activación y respuestas previstas para los riesgos.*
 
@@ -255,7 +306,7 @@ La valoración inicial se basa en el alcance acotado, el ambiente ya reproducido
 | R4 | La espera de revisión supera dos días hábiles o el esfuerzo pendiente excede la capacidad hasta el hito. | Acordar un horario de revisión, terminar el trabajo iniciado y ajustar fechas y asignaciones, conservando los criterios de aceptación. |
 | R5 | La revisión semanal detecta una tarea sin eventos, SHA o resultados. | Completar el registro a partir de evidencia verificable; declarar los datos irrecuperables y su efecto en las métricas. |
 
-La contingencia será global, del 10 % del esfuerzo pendiente, para trabajo adicional por riesgos identificados que no esté incluido en PERT. Cada activación registrará fecha, acción, esfuerzo y resultado en su incidencia. Los fallos de permisos o de salida segura impedirán entregar hasta corregirlos; si comprometen un hito, se revisará el plan.
+La contingencia de la línea base es global, de 5,5 h-p (10 % de las 55 h-p previstas al planificar), para trabajo adicional por riesgos identificados que no esté incluido en PERT. Cada activación registrará fecha, acción, esfuerzo y resultado en su incidencia. Los fallos de permisos o de salida segura impedirán entregar hasta corregirlos; si comprometen un hito, se revisará el plan.
 
 ## 9. Costos
 
@@ -267,7 +318,7 @@ La disponibilidad prevista es de cuatro horas semanales por integrante, doce hor
 
 ### 9.2. Método y estimación del esfuerzo
 
-La estimación inicial revisada combina dos técnicas de la clase 05: estimación de abajo hacia arriba, que suma el esfuerzo de actividades delimitadas, y estimación de tres puntos mediante PERT, que pondera la incertidumbre.
+La línea base de estimación combina dos técnicas de la clase 05: estimación de abajo hacia arriba, que suma el esfuerzo de actividades delimitadas, y estimación de tres puntos mediante PERT, que pondera la incertidumbre.
 
 Para cada tarea se define un esfuerzo optimista (O), más probable (M) y pesimista (P). M representa el escenario considerado más razonable. El esfuerzo esperado se calcula como:
 
@@ -277,7 +328,7 @@ H = (entero superior de 2 × E) / 2, calculado por tarea
 Costo planificado = H × ₡5.000
 ```
 
-El esfuerzo PERT se redondea hacia arriba al siguiente múltiplo de 0,5 horas por tarea. La columna E muestra el cálculo y Plan, las horas utilizadas en el calendario y presupuesto. Las estimaciones incluyen ejecución, pruebas, documentación, revisión, validación y seguimiento. Son una base de planificación pendiente de confirmar al analizar cada tarea, no horas ya trabajadas.
+El esfuerzo PERT se redondea hacia arriba a múltiplos de 0,5 horas por tarea; los múltiplos exactos se mantienen. La columna E muestra el esfuerzo esperado y la columna Plan, las horas utilizadas en el calendario y el presupuesto. Las estimaciones incluyen ejecución, pruebas, documentación, revisión, validación y seguimiento. Se conservan como línea base para comparar con las horas registradas; no representan horas ya trabajadas.
 
 *Tabla 11. Estimación PERT y esfuerzo planificado por tarea, en horas-persona.*
 
@@ -309,7 +360,7 @@ Por ejemplo, `(3 + 4 × 5 + 11) / 6` da aproximadamente 5,67 h-p para G-02, que 
 | GitHub Actions y artefactos | ₡0 | Se prevé utilizar las opciones incluidas. GitHub documenta ejecución gratuita con runners estándar en repositorios públicos [7]. |
 | Herramientas de IA y otras herramientas disponibles | ₡0 | Se utilizarán sin adquirir suscripciones adicionales para este proyecto. |
 
-Los valores de ₡0 corresponden a gastos adicionales previstos. Alexander comprobará las condiciones de Actions, el consumo y la retención de artefactos en G-02. Cualquier cargo previsto requerirá actualizar el presupuesto antes de incurrir en él.
+Los valores de ₡0 corresponden a gastos adicionales previstos. Alexander dará seguimiento al consumo y la retención de artefactos. Cualquier cargo previsto requerirá actualizar el presupuesto antes de incurrir en él.
 
 *Tabla 13. Presupuesto del proyecto y reserva de contingencia.*
 
@@ -317,28 +368,30 @@ Los valores de ₡0 corresponden a gastos adicionales previstos. Alexander compr
 |---|---:|---:|
 | Doce tareas del plan, redondeadas por tarea | 49 | ₡245.000 |
 | Cierre final | 6 | ₡30.000 |
-| Subtotal de trabajo pendiente | 55 | ₡275.000 |
-| Contingencia del 10 % sobre el trabajo pendiente | 5,5 | ₡27.500 |
-| Trabajo pendiente con contingencia | 60,5 | ₡302.500 |
+| Subtotal planificado después del entregable 1 | 55 | ₡275.000 |
+| Contingencia del 10 % sobre las 55 h-p planificadas | 5,5 | ₡27.500 |
+| Trabajo planificado con contingencia | 60,5 | ₡302.500 |
 | Preparación del entregable 1, estimación retrospectiva | 6 | ₡30.000 |
 | Gastos adicionales previstos | — | ₡0 |
 | Total del proyecto con contingencia | 66,5 | ₡332.500 |
 
-El costo base es `(6 + 49 + 6) × ₡5.000 = ₡305.000`; con contingencia, la línea base queda en ₡332.500 y la reserva de gestión en ₡0. Las seis horas del primer avance son la estimación retrospectiva ya utilizada, sin registro detallado de sesiones; se contabilizan por separado de G-01. La contingencia se calcula sobre las 55 horas pendientes, sin aplicar el redondeo de tareas a la reserva.
+El costo base es `(6 + 49 + 6) × ₡5.000 = ₡305.000`; con contingencia, la línea base queda en ₡332.500 y la reserva de gestión en ₡0. Las seis horas del primer avance son la estimación retrospectiva ya utilizada, sin registro detallado de sesiones; se contabilizan por separado de G-01. La contingencia se calculó sobre las 55 horas planificadas después del primer avance, sin aplicar el redondeo de tareas a la reserva.
 
 ### 9.4. Control y estado real
 
-Juan Ignacio consolidará las horas de ejecución, revisión y validación por tarea; Alexander registrará los recursos y cualquier desembolso adicional; José revisará el uso de la contingencia. La estimación al cierre será el esfuerzo consumido más el esfuerzo pendiente, valorados a la misma tarifa, más los gastos adicionales atribuibles.
+Los comentarios de esfuerzo en [G-01](https://github.com/agvor/mattermost/issues/6), [G-02](https://github.com/agvor/mattermost/issues/7) y las [cuatro tareas TA](https://github.com/agvor/mattermost/issues/4) suman 1.520 minutos entre ejecución, revisión y validación: 25,33 h-p frente a 23 planificadas. La diferencia es de 2,33 h-p (10,14 %), y el trabajo registrado equivale a ₡126.666,67 con la tarifa académica.
 
-El equipo revisará el plan si la proyección supera en más del 20 % el costo base de todo el proyecto: más de ₡366.000 (`₡305.000 × 1,20`). Si la variación corresponde solo a esfuerzo, equivale a superar 73,2 horas-persona. El cálculo también incluirá cualquier gasto adicional. Superar este umbral requerirá revisar el plan y la reserva disponible de 5,5 horas. Se revisará antes si la proyección agota la contingencia, supera la capacidad semanal, compromete una entrega o falla un criterio de permisos o seguridad.
+Al sustituir las 23 h-p planificadas para esas seis tareas por el esfuerzo registrado y mantener las demás estimaciones del plan, la proyección es de 63,33 h-p, incluidas las 6 h-p retrospectivas del primer avance: ₡316.666,67 antes de contingencia. El cálculo es `(61 − 23 + 1520 / 60) × ₡5.000`, sin redondeos intermedios.
+
+La proyección supera el costo base de ₡305.000 en ₡11.666,67, dentro de la reserva de ₡27.500. Se mantiene el umbral de revisión de ₡366.000; se ajustará el plan si se agota la reserva o se supera la capacidad disponible.
 
 ## 10. Coevaluación
 
-Las notas y las justificaciones se acordarán entre los tres integrantes según los aportes realizados y se completarán para la entrega del segundo avance.
+Las notas se proponen según los aportes registrados en issues y PR. Los tres integrantes deben acordarlas antes de entregar el PDF.
 
-*Tabla 14. Coevaluación y justificación de los aportes del equipo.*
+*Tabla 14. Coevaluación del equipo.*
 
-| Integrante | Nota sugerida | Aporte y justificación |
+| Integrante | Nota sugerida | Justificación, cuando corresponda |
 |---|---|---|
 | Alexander Gatica (`agvor`) | 100 | N/A |
 | José Cisneros (`megachivo`) | 100 | N/A |
@@ -465,7 +518,7 @@ Este registro permite comparar el esfuerzo previsto con el trabajado, calcular e
 
 ## Anexo B. Distribución del esfuerzo por tarea
 
-Las horas corresponden a los roles asignados en las tablas 1 a 3; su suma es el esfuerzo Plan de la tabla 11. El responsable incluye implementación, pruebas, documentación y coordinación; el revisor y el validador incluyen sus comprobaciones y seguimiento. En las tareas que cruzan semanas, el signo + separa las horas de la primera y la segunda semana de su ventana. Esta distribución inicial se ajustará con las horas reales.
+Las horas corresponden a los roles asignados en las tablas 1 a 3; su suma es el esfuerzo Plan de la tabla 11. El esfuerzo del responsable incluye implementación, pruebas, documentación y coordinación; el del revisor y el del validador incluyen sus comprobaciones y seguimiento. En las tareas que abarcan dos semanas, el signo + separa las horas de la primera y la segunda semana de su ventana. Esta distribución inicial se ajustará con las horas reales.
 
 *Tabla 15. Esfuerzo previsto por rol, en horas-persona.*
 
