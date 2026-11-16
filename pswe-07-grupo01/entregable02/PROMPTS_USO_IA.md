@@ -240,3 +240,15 @@ admitidos y maliciosos, con el estado inicial y la variante `open`. Deje
 como decisiones abiertas lo que corresponde a otras tareas y mantenga la
 redacción simple, con el mismo formato de <DEFINICION_ANTERIOR>.
 ```
+
+## DT-02: implementar la sección desplegable
+
+```text
+Para <TAREA>, implemente la sintaxis acordada en <DEFINICION> sin modificar
+la dependencia del analizador: reconozca el bloque antes del formato, fuera
+de los bloques de código, y deje como texto todo lo que no cumpla las
+decisiones. Procese el resumen y el cuerpo con el mismo formato seguro que
+el resto del mensaje y represente la sección con un componente accesible
+por teclado. Escriba pruebas para cada ejemplo y caso de aceptación de la
+definición y ejecute las pruebas existentes de Markdown y formato.
+```

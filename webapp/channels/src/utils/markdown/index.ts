@@ -11,22 +11,52 @@ import store from 'stores/redux_store';
 import type EmojiMap from 'utils/emoji_map';
 import RemoveMarkdown from 'utils/markdown/remove_markdown';
 import {convertEntityToCharacter} from 'utils/text_formatting';
+import type {TextFormattingOptions} from 'utils/text_formatting';
 import {getScheme} from 'utils/url';
 
+import {splitDetailsSections} from './details_section';
 import Renderer from './renderer';
 
 const removeMarkdown = new RemoveMarkdown();
 
-export function format(text: string, options = {}, emojiMap?: EmojiMap) {
-    return formatWithRenderer(text, new Renderer({}, options, emojiMap));
+export function format(text: string, options: TextFormattingOptions = {}, emojiMap?: EmojiMap) {
+    const renderer = new Renderer({}, options, emojiMap);
+
+    // Collapsible sections are only recognized in multi-line messages (DT-02).
+    if (options.singleline) {
+        return formatWithRenderer(text, renderer);
+    }
+
+    const segments = splitDetailsSections(text);
+    if (segments.length === 1 && segments[0].type === 'text') {
+        return formatWithRenderer(text, renderer);
+    }
+
+    return segments.map((segment) => {
+        if (segment.type === 'text') {
+            return formatWithRenderer(segment.text, renderer);
+        }
+
+        // The summary and the body go through the same sanitized formatting as the rest of the message.
+        // Only these marker elements are added; messageHtmlToComponent turns them into DetailsSection.
+        const summary = formatInlineWithRenderer(segment.summary, renderer);
+        const body = segment.body.trim() ? formatWithRenderer(segment.body, renderer) : '';
+
+        return (
+            `<div data-details-section="${segment.open ? 'open' : 'closed'}">` +
+                `<span data-details-summary="true">${summary}</span>` +
+                `<div data-details-body="true">${body}</div>` +
+            '</div>'
+        );
+    }).join('');
 }
 
-export function formatWithRenderer(text: string, renderer: marked.Renderer) {
+function getMarkdownOptions(renderer: marked.Renderer) {
     const state = store.getState();
     const config = getConfig(state);
     const urlFilter = getAutolinkedUrlSchemeFilter(state);
 
-    const markdownOptions = {
+    return {
         renderer,
         sanitize: true,
         gfm: true,
@@ -35,8 +65,16 @@ export function formatWithRenderer(text: string, renderer: marked.Renderer) {
         inlinelatex: config.EnableLatex === 'true' && config.EnableInlineLatex === 'true',
         urlFilter,
     };
+}
 
-    return marked(text, markdownOptions).trim();
+export function formatWithRenderer(text: string, renderer: marked.Renderer) {
+    return marked(text, getMarkdownOptions(renderer)).trim();
+}
+
+// Formats only inline Markdown (emphasis, code, links, emojis, mentions), without block elements.
+function formatInlineWithRenderer(text: string, renderer: marked.Renderer) {
+    const options = Object.assign({}, marked.defaults, getMarkdownOptions(renderer));
+    return marked.inlineLexer(text, [], options).trim();
 }
 
 const getAutolinkedUrlSchemeFilter = createSelector(

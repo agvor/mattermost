@@ -9,6 +9,7 @@ import type {PostActionIntegrationFormat} from '@mattermost/types/integration_ac
 
 import AtMention from 'components/at_mention';
 import CodeBlock from 'components/code_block/code_block';
+import DetailsSection from 'components/details_section';
 import InlineActionButton from 'components/inline_action_button';
 import InlineEntityLink from 'components/inline_entity_link';
 import LatexBlock from 'components/latex_block';
@@ -305,6 +306,32 @@ export default function messageHtmlToComponent(html: string, options: Options = 
                         language={node.attribs['data-codeblock-language']}
                         searchedContent={node.attribs['data-codeblock-searchedcontent']}
                     />
+                );
+            },
+        });
+    }
+
+    if (!('markdown' in options) || options.markdown) {
+        // Collapsible sections produced by Markdown.format (DT-02).
+        processingInstructions.push({
+            replaceChildren: false,
+            shouldProcessNode: (node) => node.attribs && (node.attribs['data-details-summary'] || node.attribs['data-details-body']),
+            processNode: (node: any, children: React.ReactNode, index?: number) => {
+                return <React.Fragment key={index}>{children}</React.Fragment>;
+            },
+        });
+        processingInstructions.push({
+            replaceChildren: false,
+            shouldProcessNode: (node) => node.attribs && node.attribs['data-details-section'],
+            processNode: (node: any, children: React.ReactNode[] = [], index?: number) => {
+                return (
+                    <DetailsSection
+                        key={index}
+                        open={node.attribs['data-details-section'] === 'open'}
+                        summary={children[0]}
+                    >
+                        {children[1]}
+                    </DetailsSection>
                 );
             },
         });
