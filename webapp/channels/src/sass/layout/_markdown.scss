@@ -302,6 +302,26 @@ h6.markdown__heading {
     }
 }
 
+.post-details {
+    margin: 4px 0;
+
+    .post-details__summary {
+        display: list-item;
+        width: fit-content;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:focus-visible {
+            box-shadow: 0 0 0 2px var(--button-bg);
+            outline: none;
+        }
+    }
+
+    .post-details__body {
+        padding: 4px 0 0 16px;
+    }
+}
+
 .markdown__table {
     margin: 5px 0 10px;
     background: var(--center-channel-bg);
