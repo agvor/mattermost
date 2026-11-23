@@ -30,6 +30,7 @@ export default class ShowMore extends React.PureComponent<Props, State> {
     private maxHeight: number;
     private textContainer: React.RefObject<HTMLDivElement | null>;
     private overflowRef?: number;
+    private toggleTarget?: HTMLDivElement | null;
 
     constructor(props: Props) {
         super(props);
@@ -45,6 +46,11 @@ export default class ShowMore extends React.PureComponent<Props, State> {
         this.checkTextOverflow();
 
         window.addEventListener('resize', this.handleResize);
+
+        // Opening or closing a collapsible section changes the height of the message without changing
+        // its text. The toggle event does not bubble, so it is listened to in the capture phase (DT-03).
+        this.toggleTarget = this.textContainer.current;
+        this.toggleTarget?.addEventListener('toggle', this.handleResize, true);
     }
 
     componentDidUpdate(prevProps: Props) {
@@ -60,6 +66,7 @@ export default class ShowMore extends React.PureComponent<Props, State> {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.handleResize);
+        this.toggleTarget?.removeEventListener('toggle', this.handleResize, true);
         if (this.overflowRef) {
             window.cancelAnimationFrame(this.overflowRef);
         }
