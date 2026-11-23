@@ -380,4 +380,25 @@ describe('Utils.makeIsEligibleForClick', () => {
 
         document.body.removeChild(post);
     });
+
+    test('returns false when clicking the summary of a collapsible section', () => {
+        const post = document.createElement('div');
+        const details = document.createElement('details');
+        const summary = document.createElement('summary');
+        const strong = document.createElement('strong');
+
+        post.appendChild(details);
+        details.appendChild(summary);
+        summary.appendChild(strong);
+        document.body.appendChild(post);
+
+        const event = {
+            currentTarget: post,
+            target: strong,
+        } as unknown as React.MouseEvent;
+
+        expect(isEligibleForClick(event)).toBe(false);
+
+        document.body.removeChild(post);
+    });
 });
