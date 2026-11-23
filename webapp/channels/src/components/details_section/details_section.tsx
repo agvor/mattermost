@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 type Props = {
 
@@ -16,6 +16,12 @@ type Props = {
 // click, Enter and Space behave the same in every view and do not reach the message editor.
 export default function DetailsSection({open = false, summary, children}: Props) {
     const [isOpen, setIsOpen] = useState(open);
+
+    // When the message changes (edited, or typed in the preview) and the initial state changes
+    // between <details> and <details open>, show the new initial state (DT-03, CA-DT-06).
+    useEffect(() => {
+        setIsOpen(open);
+    }, [open]);
 
     const toggle = useCallback(() => setIsOpen((value) => !value), []);
 

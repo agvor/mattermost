@@ -5,8 +5,9 @@ import EmojiMap from 'utils/emoji_map';
 import {formatText} from 'utils/text_formatting';
 
 import {splitDetailsSections} from './details_section';
+import Renderer from './renderer';
 
-import {format, stripMarkdown} from './index';
+import {format, formatWithRenderer, stripMarkdown} from './index';
 
 // Example IDs (V, I, N, M) and acceptance cases (CA-DT-*) refer to DT-01_definicion.md.
 
@@ -212,6 +213,37 @@ describe('formatText with collapsible sections', () => {
     test('CA-DT-15: messages without sections give the same output', () => {
         const text = 'Hola **mundo**\n\n- uno\n- dos\n\n```js\nconst a = 1;\n```';
         expect(formatText(text, {}, emojiMap)).not.toContain('data-details');
+    });
+
+    // DT-03: regression of ordinary messages. formatWithRenderer is the path that format used on master
+    // (817f7633) for every message, so the output must be identical for messages without a section.
+    test.each([
+        ['paragraphs and emphasis', 'Hola **mundo**, _cursiva_ y ~~tachado~~.\n\nSegundo párrafo.'],
+        ['headings', '# Título\n\n## Subtítulo\n\nTexto'],
+        ['lists', '- uno\n- dos\n  - anidado\n\n1. primero\n2. segundo'],
+        ['task list', '- [ ] pendiente\n- [x] hecho'],
+        ['code block', '```js\nconst a = 1;\n```'],
+        ['inline code', 'Usa `<details>` para contraer'],
+        ['quote', '> Cita\n> con dos líneas'],
+        ['table', '| A | B |\n|---|---|\n| 1 | 2 |'],
+        ['links', 'Ver https://mattermost.com y [docs](https://docs.mattermost.com)'],
+        ['escaped HTML', '<p>párrafo</p> <script>alert(1)</script>'],
+        ['latex', '```latex\nx^2\n```'],
+        ['horizontal rule', 'antes\n\n---\n\ndespués'],
+        ['incomplete section (I1)', '<details>\n<summary>R</summary>\nCuerpo'],
+        ['one-line section (N2)', '<details><summary>R</summary>Cuerpo</details>'],
+        ['section inside a quote (N5)', '> <details>\n> <summary>R</summary>\n> </details>'],
+    ])('CA-DT-15: %s keeps the same output as before', (_, text) => {
+        expect(format(text, {}, emojiMap)).toBe(formatWithRenderer(text, new Renderer({}, {}, emojiMap)));
+    });
+
+    test('CA-DT-15: text around a section keeps the same output as on its own', () => {
+        const before = 'Texto con **negrita**\n\n- uno\n- dos';
+        const after = '> cita final';
+        const output = format(`${before}\n\n<details>\n<summary>R</summary>\nCuerpo\n</details>\n\n${after}`, {}, emojiMap);
+
+        expect(output.startsWith(format(before, {}, emojiMap))).toBe(true);
+        expect(output.endsWith(format(after, {}, emojiMap))).toBe(true);
     });
 
     test('CA-DT-16: stripMarkdown (notifications, search, threads) is unchanged', () => {

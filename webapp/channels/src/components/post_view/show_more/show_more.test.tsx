@@ -212,4 +212,32 @@ describe('components/post_view/ShowMore', () => {
         );
         expect(instance.checkTextOverflow).toHaveBeenCalledTimes(7);
     });
+
+    test('DT-03: opening or closing a collapsible section inside the message checks the overflow again', () => {
+        const ref = React.createRef<ShowMore>();
+        const {container, unmount} = renderWithContext(
+            <ShowMore
+                {...baseProps}
+                ref={ref}
+            >
+                <details>
+                    <summary>{'Resumen'}</summary>
+                    <p>{'Cuerpo'}</p>
+                </details>
+            </ShowMore>,
+        );
+        const instance = ref.current!;
+        instance.checkTextOverflow = jest.fn();
+
+        // The toggle event does not bubble; ShowMore must still receive it.
+        act(() => {
+            container.querySelector('details')!.dispatchEvent(new Event('toggle', {bubbles: false}));
+        });
+        expect(instance.checkTextOverflow).toHaveBeenCalledTimes(1);
+
+        const details = container.querySelector('details')!;
+        unmount();
+        details.dispatchEvent(new Event('toggle', {bubbles: false}));
+        expect(instance.checkTextOverflow).toHaveBeenCalledTimes(1);
+    });
 });

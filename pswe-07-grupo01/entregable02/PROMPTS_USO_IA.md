@@ -252,3 +252,14 @@ el resto del mensaje y represente la sección con un componente accesible
 por teclado. Escriba pruebas para cada ejemplo y caso de aceptación de la
 definición y ejecute las pruebas existentes de Markdown y formato.
 ```
+
+## DT-03: integrar los recorridos del mensaje
+
+```text
+Para <TAREA>, revise la sección desplegable de <TAREA_ANTERIOR> en la vista
+previa, el mensaje publicado y la edición. Busque diferencias entre esas
+vistas y casos en los que el mensaje cambie sin que la sección se actualice.
+Corrija solo lo necesario y escriba pruebas de consistencia entre las tres
+vistas y de regresión de los mensajes sin sección, comparando con la salida
+anterior. Compruebe que cada prueba falla sin la corrección.
+```
