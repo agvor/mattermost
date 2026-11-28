@@ -16,7 +16,7 @@ export PW_BASE_URL=http://localhost:8065 PW_ADMIN_USERNAME=sysadmin PW_ADMIN_PAS
 npm run test -- collapsible_sections --project=chrome
 ```
 
-Resultado: 12 suites y 384 tests pasaron, 0 fallaron (8 snapshots).
+Resultado: 10 pruebas pasaron, 0 fallaron (3 de preparación del servidor y 7 de secciones colapsables).
 Evidencia: [`resultado_e2e.txt`](resultado_e2e.txt) e [`informe_e2e.png`](informe_e2e.png).
 
 | Prueba | Casos cubiertos |
