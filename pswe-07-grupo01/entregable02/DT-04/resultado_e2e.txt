@@ -1,0 +1,12 @@
+Running 10 tests using 1 worker
+  ✓   1 [setup] › specs/test_setup.ts:6:6 › ensure plugins are loaded (182ms)
+  ✓   2 [setup] › specs/test_setup.ts:11:6 › ensure server deployment (158ms)
+  ✓   3 [setup] › specs/test_setup.ts:16:6 › ensure ABAC is configured (177ms)
+  ✓   4 [chrome] › specs/functional/channels/messaging/collapsible_sections.spec.ts:18:5 › Collapsible section renders closed and toggles on click @messaging (3.1s)
+  ✓   5 [chrome] › specs/functional/channels/messaging/collapsible_sections.spec.ts:45:5 › Collapsible section with open attribute toggles with keyboard @messaging (3.3s)
+  ✓   6 [chrome] › specs/functional/channels/messaging/collapsible_sections.spec.ts:76:5 › Invalid and malicious collapsible input stays as plain text @messaging (4.2s)
+  ✓   7 [chrome] › specs/functional/channels/messaging/collapsible_sections.spec.ts:112:5 › Editing a collapsible section updates its initial state @messaging (3.3s)
+  ✓   8 [chrome] › specs/functional/channels/messaging/collapsible_sections.spec.ts:137:5 › Collapsible section works in the composer preview without sending @messaging (3.4s)
+  ✓   9 [chrome] › specs/functional/channels/messaging/collapsible_sections.spec.ts:174:5 › Incomplete and unsupported collapsible examples stay as plain text @messaging (4.5s)
+  ✓  10 [chrome] › specs/functional/channels/messaging/collapsible_sections.spec.ts:202:5 › Script, iframe and javascript links inside a section are neutralized @messaging (4.0s)
+  10 passed (27.8s)
